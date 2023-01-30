@@ -35,11 +35,11 @@ castellatedMeshControls
     nCellsBetweenLevels           2;
     allowFreeStandingZoneFaces    true;
     maxGlobalCells 				2e8;
-    maxLoadUnbalance              0.10;
+    maxLoadUnbalance              0.25;
     maxLocalCells 				1e8;
     minRefinementCells            1;
-    planarAngle 				    91;
-    resolveFeatureAngle 	        91;
+    planarAngle 				    30;
+    resolveFeatureAngle 	        30;
 
     features
     (
@@ -48,7 +48,7 @@ castellatedMeshControls
     {
         body
         {
-            level (5 5);
+            level (2 2);
         }
     }
     refinementRegions
@@ -72,31 +72,29 @@ snapControls
 // Settings for the layer addition.
 addLayersControls
 {
-        expansionRatio              1.2;
-        featureAngle                250;	
-        finalLayerThickness         2e-1;
-        minThickness                1e-1;
-        nGrow                       0;
-        nSurfaceLayers 			2;
-        relativeSizes 		        true;
+        relativeSizes             true;
+        expansionRatio            1.2;
+        featureAngle 130;
+        finalLayerThickness       0.5;
+        minThickness              0.1;
+        nGrow                     0;
         maxFaceThicknessRatio       0.5;
-        nSmoothSurfaceNormals 		1;
-        nSmoothThickness 			    10;
-        maxThicknessToMedialRatio   0.3;
-        minMedianAxisAngle          90;
-        nSmoothNormals 				3;
-        nLayerIter                    50;
-        nRelaxedIter                  20;
-        nRelaxIter                    5;
-        slipFeatureAngle 			    30;
+        nSmoothSurfaceNormals 1;
+        nSmoothThickness 10;
+        maxThicknessToMedialRatio 0.3;
+        minMedialAxisAngle 90;
+        minMedianAxisAngle 90;
+        nSmoothNormals 30;
+        nLayerIter 50;
+        nRelaxedIter 20;
+        nRelaxIter 5;
+        slipFeatureAngle 30;
         nBufferCellsNoExtrude         0;
-        additionalReporting         true;
-        nBufferCellsNoExtrude       0;
         layers
         {
-              body
+              body_Wall001
               {
-                      nSurfaceLayers 10;
+                      nSurfaceLayers 3;
               }
       }
 }

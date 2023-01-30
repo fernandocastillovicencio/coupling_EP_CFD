@@ -65,7 +65,7 @@ def create_blockMeshDict(casedir,box_limits):
         w(f, '')
         
         # mesh_divisions=25
-        mesh_division_size=12
+        mesh_division_size=10
         ds = (box_limits[5]-box_limits[4])/mesh_division_size
         xcells = round( (box_limits[1]-box_limits[0])/ds )
         ycells = round( (box_limits[3]-box_limits[2])/ds )
@@ -367,11 +367,11 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '    nCellsBetweenLevels           2;')
         w(f, '    allowFreeStandingZoneFaces    true;')
         w(f, '    maxGlobalCells 				2e8;')
-        w(f, '    maxLoadUnbalance              0.10;')
+        w(f, '    maxLoadUnbalance              0.25;')
         w(f, '    maxLocalCells 				1e8;')
         w(f, '    minRefinementCells            1;')
-        w(f, '    planarAngle 				    91;')
-        w(f, '    resolveFeatureAngle 	        91;')
+        w(f, '    planarAngle 				    30;')
+        w(f, '    resolveFeatureAngle 	        30;')
         w(f, '')
         w(f, '    features')
         w(f, '    (')
@@ -381,7 +381,7 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '    {')
         w(f, '        body')
         w(f, '        {')
-        w(f, '            level (5 5);')
+        w(f, '            level (2 2);')
         w(f, '        }')
         w(f, '    }')
         w(f, '    refinementRegions')
@@ -414,49 +414,49 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, 'addLayersControls')
         w(f, '{')
         # ------------------------- basic parameters ------------------------- #
-        w(f, '        expansionRatio              1.2;')
-        # w(f, '        featureAngle                150;	')
-        w(f, '        featureAngle                250;	')
-        w(f, '        finalLayerThickness         2e-1;')
-        # w(f, '        firstLayerThickness         2e-1;')
-        w(f, '        minThickness                1e-1;')
-        w(f, '        nGrow                       0;')
-        w(f, '        nSurfaceLayers 			2;')
-        w(f, '        relativeSizes 		        true;')
-        # # w(f, '        thickness 			        1;')
+        w(f, '        relativeSizes             true;')
+        w(f, '        expansionRatio            1.2;')
+        w(f, '        featureAngle 130;')
+        # w(f, '        featureAngle              270;	')
+        w(f, '        finalLayerThickness       0.5;')
+        # w(f, '        firstLayerThickness       0.1;')
+        w(f, '        minThickness              0.1;')
+        w(f, '        nGrow                     0;')
+        # w(f, '        nSurfaceLayers 			3;')
+        # w(f, '        thickness 			    10;')
         # ----------------------------- advanced 1---------------------------- #
         w(f, '        maxFaceThicknessRatio       0.5;') # Stop layer growth on highly warped cells
         # ------------------- advanced: patch displacement ------------------- #
-        w(f, '        nSmoothSurfaceNormals 		1;')
-        w(f, '        nSmoothThickness 			    10;')
+        w(f, '        nSmoothSurfaceNormals 1;')
+        w(f, '        nSmoothThickness 10;')
         # ------------------ advanced: medial axis analysis ------------------ #
-        w(f, '        maxThicknessToMedialRatio   0.3;') #
-        # w(f, '        minMedialAxisAngle          90;')
-        w(f, '        minMedianAxisAngle          90;')
+        w(f, '        maxThicknessToMedialRatio 0.3;') #
+        w(f, '        minMedialAxisAngle 90;')
+        w(f, '        minMedianAxisAngle 90;')
         # w(f, '        nMedialAxisIter             10;')
         # w(f, '        nSmoothDisplacement 		    90;')
         # w(f, '        nSmoothNormals 				15;')
-        w(f, '        nSmoothNormals 				3;')
+        w(f, '        nSmoothNormals 30;')
         # -------------------------- mesh shrinking -------------------------- #
-        w(f, '        nLayerIter                    50;')
-        w(f, '        nRelaxedIter                  20;')
-        w(f, '        nRelaxIter                    5;') #5 or 25
-        w(f, '        slipFeatureAngle 			    30;') #130 or 30
+        w(f, '        nLayerIter 50;')
+        w(f, '        nRelaxedIter 20;')
+        w(f, '        nRelaxIter 5;') #5 or 25
+        w(f, '        slipFeatureAngle 30;') #130 or 30
         w(f, '        nBufferCellsNoExtrude         0;') 
         
-        w(f, '        additionalReporting         true;')
+        # w(f, '        additionalReporting         true;')
         # ------------------------------ unknown ----------------------------- #
-        w(f, '        nBufferCellsNoExtrude       0;')
+        # w(f, '        nBufferCellsNoExtrude       0;')
         
         # ------------------------------ layers ------------------------------ #
         w(f, '        layers')
         w(f, '        {')
-        w(f, '              body')
+        w(f, '              body_Wall001')
         # w(f, '              body { nSurfaceLayers 3; }')
         w(f, '              {')
-        w(f, '                      nSurfaceLayers 10;')
-        # w(f, '                      expansionRatio 1.1;')
-        # w(f, '                      firstLayerThickness 0.0001;')
+        w(f, '                      nSurfaceLayers 3;')
+        # w(f, '                      expansionRatio 1.2;')
+        # w(f, '                      firstLayerThickness 0.005;')
         w(f, '              }')
         w(f, '      }')
         w(f, '}')
@@ -479,10 +479,11 @@ def create_snappyHexMeshDict(casedir,box_limits):
 def create_meshQualityDict(casedir):
     with open(casedir+'/system/meshQualityDict', 'w') as f:
         w_header(f, 'dictionary', 'meshQualityDict')
-        w(f, 'maxNonOrtho 80;')
+        # w(f, 'maxNonOrtho 80;')
+        w(f, 'maxNonOrtho 70;')
         w(f, 'maxBoundarySkewness 4;	//original 20')
         w(f, 'maxInternalSkewness 4;')
-        w(f, 'maxConcave 80;')
+        w(f, 'maxConcave 70;')
         w(f, 'minVol 1e-13;')
         w(f, 'minTetQuality -1e30; 	//for best layer insertion	')
         w(f, 'minArea -1;')

@@ -38,17 +38,17 @@ def mkMesh():
     cd files/foamCase
     # surfaceFeatureExtract -noFunctionObjects
     decomposePar
-    mpirun --use-hwthread-cpus -np 24 snappyHexMesh -parallel -noFunctionObjects -overwrite
+    mpirun --use-hwthread-cpus -np 24 snappyHexMesh -parallel -noFunctionObjects -overwrite > log.snappyHexMesh
     reconstructParMesh -constant
-    mpirun --use-hwthread-cpus -np 24 checkMesh -parallel -latestTime
+    # mpirun --use-hwthread-cpus -np 24 checkMesh -parallel -latestTime
     paraFoam
     """
     single_snappy_commands="""
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
     # surfaceFeatureExtract -noFunctionObjects
-    snappyHexMesh -noFunctionObjects -overwrite
-    checkMesh
+    snappyHexMesh -noFunctionObjects -overwrite > log.snappyHexMesh
+    # checkMesh
     paraFoam
     """
     os.system(multi_snappy_commands)

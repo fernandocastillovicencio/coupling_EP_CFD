@@ -23,9 +23,9 @@ ymax 38.1;
 zmin 0.0;
 zmax 27.432;
 
-xcells 40;
-ycells 40;
-zcells 12;
+xcells 33;
+ycells 33;
+zcells 10;
 
 vertices
 (

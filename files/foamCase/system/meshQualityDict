@@ -14,10 +14,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-maxNonOrtho 80;
+maxNonOrtho 70;
 maxBoundarySkewness 4;	//original 20
 maxInternalSkewness 4;
-maxConcave 80;
+maxConcave 70;
 minVol 1e-13;
 minTetQuality -1e30; 	//for best layer insertion	
 minArea -1;
