@@ -1,0 +1,146 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2206                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+
+geometry
+{
+      body.stl
+      {
+              type triSurfaceMesh;
+              name body; 
+      }
+      refinementBox1
+      {
+              type box;
+              min ( -4.572 -4.572 -4.572 );
+              max ( 19.812 19.812 9.144 );
+      }
+      refinementBox2
+      {
+              type box;
+              min ( -1.143 -1.143 -1.143 );
+              max ( 16.383 16.383 5.715 );
+      }
+      refinementBox3
+      {
+              type box;
+              min ( -0.28575 -0.28575 -0.28575 );
+              max ( 15.52575 15.52575 4.85775 );
+      }
+};
+
+
+
+castellatedMeshControls
+{
+    allowFreeStandingZoneFaces    true;
+    maxGlobalCells 				20000000;
+    maxLoadUnbalance              0.10;
+    maxLocalCells 				10000000;
+    minRefinementCells            1;
+    nCellsBetweenLevels           2;
+    planarAngle 				    1;
+    resolveFeatureAngle 	        1;
+
+    features
+    (
+        { file "body.eMesh"; level 0; }
+    );
+    refinementSurfaces
+    {
+        body
+        {
+            level (1 1);
+        }
+    }
+    refinementRegions
+    {
+        refinementBox1
+        {
+            mode inside;
+            levels ((1 1));
+        }
+        refinementBox2
+        {
+            mode inside;
+            levels ((2 2));
+        }
+        refinementBox3
+        {
+            mode inside;
+            levels ((3 3));
+        }
+    }
+    locationInMesh (26.67 26.67 16.002); 
+}
+
+snapControls
+{
+      explicitFeatureSnap     true;
+      implicitFeatureSnap     false;
+	    multiRegionFeatureSnap  false;
+	    nFeatureSnapIter        10;
+      nRelaxIter              5;
+      nSmoothPatch            3;
+      nSolveIter              100;
+      tolerance               2.0;
+}
+
+// Settings for the layer addition.
+addLayersControls
+{
+      additionalReporting         false;
+	    expansionRatio              1.3;
+      featureAngle                30;	
+      firstLayerThickness         0.1;
+      maxFaceThicknessRatio       0.5;
+      maxThicknessToMedialRatio   0.3;
+      minMedialAxisAngle          90;
+      minMedianAxisAngle          90;
+	    minThickness                0.5;
+      nBufferCellsNoExtrude       0;
+      nGrow                       0;
+      nLayerIter                  50;
+      nMedialAxisIter             10;
+      nRelaxedIter                20;
+      nRelaxIter                  3;
+      nSmoothNormals 				3;
+      nSmoothSurfaceNormals 		1;
+      nSmoothThickness 			10;
+      relativeSizes 		        true;
+      slipFeatureAngle 			130;
+      layers
+      {
+              body { nSurfaceLayers 2; }
+      }
+}
+
+meshQualityControls
+{
+      #include "meshQualityDict"
+      relaxed
+      {
+              maxNonOrtho 75;
+      }
+      nSmoothScale 4;
+      errorReduction 0.75;
+}
+debug 0;
+mergeTolerance 1e-6;
