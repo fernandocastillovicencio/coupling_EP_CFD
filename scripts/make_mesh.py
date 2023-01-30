@@ -36,23 +36,29 @@ def mkMesh():
     multi_snappy_commands= """
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
-    surfaceFeatureExtract -noFunctionObjects
+    # surfaceFeatureExtract -noFunctionObjects
     decomposePar
     mpirun --use-hwthread-cpus -np 24 snappyHexMesh -parallel -noFunctionObjects -overwrite
     reconstructParMesh -constant
     mpirun --use-hwthread-cpus -np 24 checkMesh -parallel -latestTime
     paraFoam
-    foamCleanTutorials
-    foamCleanPolyMesh
     """
     single_snappy_commands="""
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
-    surfaceFeatureExtract -noFunctionObjects
+    # surfaceFeatureExtract -noFunctionObjects
     snappyHexMesh -noFunctionObjects -overwrite
+    checkMesh
     paraFoam
-    foamCleanTutorials && foamCleanPolyMesh && ls && rm -rf constant/extendedFeatureEdgeMesh
     """
     os.system(multi_snappy_commands)
-
+    # ------------------------------------------------------------------------ #
+    cleanCmd="""
+    . /usr/lib/openfoam/openfoam2206/etc/bashrc
+    cd files/foamCase
+    foamCleanTutorials
+    foamCleanPolyMesh
+    rm -rf constant/extendedFeatureEdgeMesh
+    """
+    os.system(cleanCmd)
     

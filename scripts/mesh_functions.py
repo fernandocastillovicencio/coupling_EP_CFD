@@ -336,18 +336,17 @@ def create_snappyHexMeshDict(casedir,box_limits):
         factor = 5
         H = box_limits[5]-box_limits[4]
         # -------------------------------------------------------------------- #
-        n = 3 ; r=1/4
+        n = 1 ; r=1/4
         box_scales = [1]*n
         for i in range(n):
             box_scales[i]*=r**(i)
-        # box_scales=[1,0.3,0.05]
         
         # -------------------------------------------------------------------- #
         w_header(f,'dictionary','snappyHexMeshDict')
         # ----------------------- initial configuration ---------------------- #
         w(f,'castellatedMesh true;')
-        w(f,'snap            true;')
-        w(f,'addLayers       false;')
+        w(f,'snap            false;')
+        w(f,'addLayers       true;')
         w(f, '\n')
         w(f, 'geometry')
         w(f, '{')
@@ -356,8 +355,8 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '              type triSurfaceMesh;')
         w(f, '              name body; ')
         w(f, '      }')
-        for i in range(len(box_scales)):
-            box_geometry(f,H,box_limits,box_scales[i],str(i+1))
+        # for i in range(len(box_scales)):
+        #     box_geometry(f,H,box_limits,box_scales[i],str(i+1))
         w(f, '};')
         w(f, '')
         w(f, '')
@@ -365,30 +364,30 @@ def create_snappyHexMeshDict(casedir,box_limits):
         # --------------------- castellated mesh controls -------------------- #
         w(f, 'castellatedMeshControls')
         w(f, '{')
-        w(f, '    allowFreeStandingZoneFaces    true;')
-        w(f, '    maxGlobalCells 				20000000;')
-        w(f, '    maxLoadUnbalance              0.10;')
-        w(f, '    maxLocalCells 				10000000;')
-        w(f, '    minRefinementCells            1;')
         w(f, '    nCellsBetweenLevels           2;')
-        w(f, '    planarAngle 				    1;')
-        w(f, '    resolveFeatureAngle 	        1;')
+        w(f, '    allowFreeStandingZoneFaces    true;')
+        w(f, '    maxGlobalCells 				2e8;')
+        w(f, '    maxLoadUnbalance              0.10;')
+        w(f, '    maxLocalCells 				1e8;')
+        w(f, '    minRefinementCells            1;')
+        w(f, '    planarAngle 				    91;')
+        w(f, '    resolveFeatureAngle 	        91;')
         w(f, '')
         w(f, '    features')
         w(f, '    (')
-        w(f, '        { file \"body.eMesh\"; level 0; }')
+        # w(f, '        { file \"body.eMesh\"; level 0; }')
         w(f, '    );')
         w(f, '    refinementSurfaces')
         w(f, '    {')
         w(f, '        body')
         w(f, '        {')
-        w(f, '            level (1 1);')
+        w(f, '            level (5 5);')
         w(f, '        }')
         w(f, '    }')
         w(f, '    refinementRegions')
         w(f, '    {')
-        for i in range(len(box_scales)):
-            box_refinement(f,i+1)
+        # for i in range(len(box_scales)):
+        #     box_refinement(f,i+1)
         w(f, '    }')
         locx = box_limits[1]+factor/2*H
         locy = box_limits[3]+factor/2*H
@@ -414,31 +413,51 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '// Settings for the layer addition.')
         w(f, 'addLayersControls')
         w(f, '{')
-        w(f, '      additionalReporting         false;')
-        w(f, '	    expansionRatio              1.3;')
-        w(f, '      featureAngle                30;	')
-        # w(f, '	    finalLayerThickness         0.5;')
-        w(f, '      firstLayerThickness         0.1;')
-        w(f, '      maxFaceThicknessRatio       0.5;')
-        w(f, '      maxThicknessToMedialRatio   0.3;')
-        w(f, '      minMedialAxisAngle          90;')
-        w(f, '      minMedianAxisAngle          90;')
-        w(f, '	    minThickness                0.5;')
-        w(f, '      nBufferCellsNoExtrude       0;')
-        w(f, '      nGrow                       0;')
-        w(f, '      nLayerIter                  50;')
-        w(f, '      nMedialAxisIter             10;')
-        w(f, '      nRelaxedIter                20;')
-        w(f, '      nRelaxIter                  3;') #5
-        w(f, '      nSmoothNormals 				3;')
-        w(f, '      nSmoothSurfaceNormals 		1;')
-        w(f, '      nSmoothThickness 			10;')
-        # w(f, '      thickness 			        1;')
-        w(f, '      relativeSizes 		        true;')
-        w(f, '      slipFeatureAngle 			130;') #130
-        w(f, '      layers')
-        w(f, '      {')
-        w(f, '              body { nSurfaceLayers 2; }')
+        # ------------------------- basic parameters ------------------------- #
+        w(f, '        expansionRatio              1.2;')
+        # w(f, '        featureAngle                150;	')
+        w(f, '        featureAngle                250;	')
+        w(f, '        finalLayerThickness         2e-1;')
+        # w(f, '        firstLayerThickness         2e-1;')
+        w(f, '        minThickness                1e-1;')
+        w(f, '        nGrow                       0;')
+        w(f, '        nSurfaceLayers 			2;')
+        w(f, '        relativeSizes 		        true;')
+        # # w(f, '        thickness 			        1;')
+        # ----------------------------- advanced 1---------------------------- #
+        w(f, '        maxFaceThicknessRatio       0.5;') # Stop layer growth on highly warped cells
+        # ------------------- advanced: patch displacement ------------------- #
+        w(f, '        nSmoothSurfaceNormals 		1;')
+        w(f, '        nSmoothThickness 			    10;')
+        # ------------------ advanced: medial axis analysis ------------------ #
+        w(f, '        maxThicknessToMedialRatio   0.3;') #
+        # w(f, '        minMedialAxisAngle          90;')
+        w(f, '        minMedianAxisAngle          90;')
+        # w(f, '        nMedialAxisIter             10;')
+        # w(f, '        nSmoothDisplacement 		    90;')
+        # w(f, '        nSmoothNormals 				15;')
+        w(f, '        nSmoothNormals 				3;')
+        # -------------------------- mesh shrinking -------------------------- #
+        w(f, '        nLayerIter                    50;')
+        w(f, '        nRelaxedIter                  20;')
+        w(f, '        nRelaxIter                    5;') #5 or 25
+        w(f, '        slipFeatureAngle 			    30;') #130 or 30
+        w(f, '        nBufferCellsNoExtrude         0;') 
+        
+        w(f, '        additionalReporting         true;')
+        # ------------------------------ unknown ----------------------------- #
+        w(f, '        nBufferCellsNoExtrude       0;')
+        
+        # ------------------------------ layers ------------------------------ #
+        w(f, '        layers')
+        w(f, '        {')
+        w(f, '              body')
+        # w(f, '              body { nSurfaceLayers 3; }')
+        w(f, '              {')
+        w(f, '                      nSurfaceLayers 10;')
+        # w(f, '                      expansionRatio 1.1;')
+        # w(f, '                      firstLayerThickness 0.0001;')
+        w(f, '              }')
         w(f, '      }')
         w(f, '}')
         w(f, '')
