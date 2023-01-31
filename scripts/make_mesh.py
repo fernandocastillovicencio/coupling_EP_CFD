@@ -10,10 +10,13 @@ def mkMesh():
     # ------------------------ get bounding box limits ----------------------- #
     with open (rel('../files/geometry/box_limits.pickle'), 'rb') as fp:
         box_limits = pickle.load(fp)
+    # ----------------- get the list of the geomtry stl files ---------------- #
+    with open (rel('../files/geometry/stl_files.pickle'), 'rb') as fp:
+        stl_files = pickle.load(fp)
     # ------------------------------------------------------------------------ #
     # ----- CREATE NECESSARY FILES AND FOLDERS FOR MESHING AND PROCESSING ---- #
     os.system('cd files/foamCase && rm -rf *')
-    createDirsAndFiles(casedir,box_limits)
+    createDirsAndFiles(casedir,box_limits,stl_files)
     # ------------------------------ PREPARE DIR ----------------------------- #
     prepare_commands=""" 
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
@@ -38,9 +41,9 @@ def mkMesh():
     cd files/foamCase
     # surfaceFeatureExtract -noFunctionObjects
     decomposePar
-    mpirun --use-hwthread-cpus -np 24 snappyHexMesh -parallel -noFunctionObjects -overwrite > log.snappyHexMesh
+    mpirun --use-hwthread-cpus -np 26 snappyHexMesh -parallel -noFunctionObjects -overwrite > log.snappyHexMesh
     reconstructParMesh -constant
-    # mpirun --use-hwthread-cpus -np 24 checkMesh -parallel -latestTime
+    mpirun --use-hwthread-cpus -np 26 checkMesh -parallel -latestTime > log.checkMesh
     paraFoam
     """
     single_snappy_commands="""

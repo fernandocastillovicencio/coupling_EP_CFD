@@ -2,7 +2,6 @@
 import os
 import shutil
 
-
 def rel(x):
     return os.path.join(os.path.dirname(__file__), x)
 
@@ -288,10 +287,11 @@ def create_fvSol(casedir):
        w(f, '}')
        w_footer(f)
 # ---------------------------------------------------------------------------- #
-def get_geometry_file(casedir):
-    src = rel('../files/geometry/body.stl')
-    dst = rel('../files/foamCase/constant/triSurface/body.stl')
-    shutil.copyfile(src, dst)
+def get_geometry_files(stl_files):
+    for file in stl_files:
+        src = rel('../files/geometry/'+file+'.stl')
+        dst = rel('../files/foamCase/constant/triSurface/'+file+'.stl')
+        shutil.copyfile(src, dst)
 # ---------------------------------------------------------------------------- #
 def create_surfaceFeatureExtractDict(casedir):
     with open(casedir+'/system/surfaceFeatureExtractDict', 'w') as f:
@@ -329,8 +329,24 @@ def box_refinement(f,n):
         w(f, '            mode inside;')
         w(f, '            levels (('+str(n)+' '+str(n)+'));')
         w(f, '        }')
-    
-def create_snappyHexMeshDict(casedir,box_limits):
+def stl_geometry(f,file):
+    w(f, '      '+file+'.stl')
+    w(f, '      {')
+    w(f, '              type triSurfaceMesh;')
+    w(f, '              name '+file+'; ')
+    w(f, '      }')
+def stl_refinement_surfaces(f,file):
+    w(f,'        '+file)
+    w(f,'        {')
+    w(f,'               level (4 4);')
+    w(f,'        }')
+def stl_refinement_layers(f,file):
+    w(f, '              '+file)
+    w(f, '              {')
+    w(f, '                      nSurfaceLayers 10;')
+    w(f, '              }')
+       
+def create_snappyHexMeshDict(casedir,box_limits,stl_files):
     with open(casedir+'/system/snappyHexMeshDict', 'w') as f:
         # ----------------------------- variables ---------------------------- #
         factor = 5
@@ -350,28 +366,26 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '\n')
         w(f, 'geometry')
         w(f, '{')
-        w(f, '      body.stl')
-        w(f, '      {')
-        w(f, '              type triSurfaceMesh;')
-        w(f, '              name body; ')
-        w(f, '      }')
+        for file in stl_files:
+            stl_geometry(f,file)
         # for i in range(len(box_scales)):
         #     box_geometry(f,H,box_limits,box_scales[i],str(i+1))
         w(f, '};')
         w(f, '')
         w(f, '')
         w(f, '')
+        # -------------------------------------------------------------------- #
         # --------------------- castellated mesh controls -------------------- #
         w(f, 'castellatedMeshControls')
         w(f, '{')
-        w(f, '    nCellsBetweenLevels           2;')
-        w(f, '    allowFreeStandingZoneFaces    true;')
-        w(f, '    maxGlobalCells 				2e8;')
-        w(f, '    maxLoadUnbalance              0.25;')
-        w(f, '    maxLocalCells 				1e8;')
-        w(f, '    minRefinementCells            1;')
-        w(f, '    planarAngle 				    30;')
-        w(f, '    resolveFeatureAngle 	        30;')
+        w(f, '    nCellsBetweenLevels 2;')
+        w(f, '    allowFreeStandingZoneFaces true;')
+        w(f, '    maxGlobalCells 2e8;')
+        w(f, '    maxLoadUnbalance 0.25;')
+        w(f, '    maxLocalCells 1e8;')
+        w(f, '    minRefinementCells 1;')
+        w(f, '    planarAngle 30;')
+        w(f, '    resolveFeatureAngle 30;')
         w(f, '')
         w(f, '    features')
         w(f, '    (')
@@ -379,10 +393,8 @@ def create_snappyHexMeshDict(casedir,box_limits):
         w(f, '    );')
         w(f, '    refinementSurfaces')
         w(f, '    {')
-        w(f, '        body')
-        w(f, '        {')
-        w(f, '            level (2 2);')
-        w(f, '        }')
+        for file in stl_files:
+            stl_refinement_surfaces(f,file)
         w(f, '    }')
         w(f, '    refinementRegions')
         w(f, '    {')
@@ -396,36 +408,38 @@ def create_snappyHexMeshDict(casedir,box_limits):
             str(locx)+' '+str(locy)+' '+str(locz)+'); ')
         w(f, '}')
         w(f, '')
+        # -------------------------------------------------------------------- #
         # --------------------------- snap controls -------------------------- #
         w(f, 'snapControls')
         w(f, '{')
-        w(f, '      explicitFeatureSnap     true;')
-        w(f, '      implicitFeatureSnap     false;')
-        w(f, '	    multiRegionFeatureSnap  false;')
-        w(f, '	    nFeatureSnapIter        10;')
-        w(f, '      nRelaxIter              5;')
-        w(f, '      nSmoothPatch            3;')
-        w(f, '      nSolveIter              100;') #300
-        w(f, '      tolerance               2.0;')
+        w(f, '      explicitFeatureSnap true;')
+        w(f, '      implicitFeatureSnap false;')
+        w(f, '      multiRegionFeatureSnap false;')
+        w(f, '      nFeatureSnapIter 10;')
+        w(f, '      nRelaxIter 5;')
+        w(f, '      nSmoothPatch 3;')
+        w(f, '      nSolveIter 100;') #300
+        w(f, '      tolerance 2.0;')
         w(f, '}')
         w(f, '')
+        # -------------------------------------------------------------------- #
         # -------------------------- layers control -------------------------- #
         w(f, '// Settings for the layer addition.')
         w(f, 'addLayersControls')
         w(f, '{')
         # ------------------------- basic parameters ------------------------- #
-        w(f, '        relativeSizes             true;')
-        w(f, '        expansionRatio            1.2;')
+        w(f, '        relativeSizes true;')
+        w(f, '        expansionRatio 1.25;')
         w(f, '        featureAngle 130;')
         # w(f, '        featureAngle              270;	')
-        w(f, '        finalLayerThickness       0.5;')
+        # w(f, '        finalLayerThickness       0.5;')
         # w(f, '        firstLayerThickness       0.1;')
-        w(f, '        minThickness              0.1;')
-        w(f, '        nGrow                     0;')
+        w(f, '        minThickness 0.05;')
+        w(f, '        nGrow 0;')
         # w(f, '        nSurfaceLayers 			3;')
-        # w(f, '        thickness 			    10;')
+        w(f, '        thickness 1;')
         # ----------------------------- advanced 1---------------------------- #
-        w(f, '        maxFaceThicknessRatio       0.5;') # Stop layer growth on highly warped cells
+        w(f, '        maxFaceThicknessRatio 0.5;') # Stop layer growth on highly warped cells
         # ------------------- advanced: patch displacement ------------------- #
         w(f, '        nSmoothSurfaceNormals 1;')
         w(f, '        nSmoothThickness 10;')
@@ -447,17 +461,11 @@ def create_snappyHexMeshDict(casedir,box_limits):
         # w(f, '        additionalReporting         true;')
         # ------------------------------ unknown ----------------------------- #
         # w(f, '        nBufferCellsNoExtrude       0;')
-        
         # ------------------------------ layers ------------------------------ #
         w(f, '        layers')
         w(f, '        {')
-        w(f, '              body_Wall001')
-        # w(f, '              body { nSurfaceLayers 3; }')
-        w(f, '              {')
-        w(f, '                      nSurfaceLayers 3;')
-        # w(f, '                      expansionRatio 1.2;')
-        # w(f, '                      firstLayerThickness 0.005;')
-        w(f, '              }')
+        for file in stl_files:
+            stl_refinement_layers(f,file) 
         w(f, '      }')
         w(f, '}')
         w(f, '')
@@ -497,11 +505,9 @@ def create_meshQualityDict(casedir):
 def create_decomposeParDict(casedir):
     with open(casedir+'/system/decomposeParDict', 'w') as f:
         w_header(f,'dictionary','decomposeParDict')
-        w(f, 'numberOfSubdomains 24;')
+        w(f, 'numberOfSubdomains 26;')
         w(f, 'method          scotch;')
         w_footer(f)
-# ---------------------------------------------------------------------------- #
-
 # ---------------------------------------------------------------------------- #
 def create_transProp(casedir):  
     with open(casedir+'/constant/transportProperties', 'w') as f:
@@ -518,11 +524,8 @@ def create_transProp(casedir):
         w(f, 'nu              0.01;')
         w(f, '\n')
         w(f, '// ************************************************************************* //')
-
-
-
 # ---------------------------------------------------------------------------- #
-def createDirsAndFiles(casedir, box_limits):
+def createDirsAndFiles(casedir, box_limits, stl_files):
     # ----------------------------- for blockMesh ---------------------------- #
     createDirs(casedir)
     create_blockMeshDict(casedir,box_limits)
@@ -530,9 +533,9 @@ def createDirsAndFiles(casedir, box_limits):
     # --------------------------- for snappyHexMesh -------------------------- #
     create_fvSch(casedir)
     create_fvSol(casedir)
-    get_geometry_file(casedir)
-    create_surfaceFeatureExtractDict(casedir)
-    create_snappyHexMeshDict(casedir,box_limits)
+    get_geometry_files(stl_files)
+    # create_surfaceFeatureExtractDict(casedir)
+    create_snappyHexMeshDict(casedir,box_limits,stl_files)
     create_meshQualityDict(casedir)
     create_decomposeParDict(casedir)
     # ------------------------------------------------------------------------ #

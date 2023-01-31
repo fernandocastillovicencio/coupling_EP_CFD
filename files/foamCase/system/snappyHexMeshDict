@@ -21,10 +21,40 @@ addLayers       true;
 
 geometry
 {
-      body.stl
+      Wall001.stl
       {
               type triSurfaceMesh;
-              name body; 
+              name Wall001; 
+      }
+      Wall002.stl
+      {
+              type triSurfaceMesh;
+              name Wall002; 
+      }
+      Wall003.stl
+      {
+              type triSurfaceMesh;
+              name Wall003; 
+      }
+      Wall004.stl
+      {
+              type triSurfaceMesh;
+              name Wall004; 
+      }
+      Flr001.stl
+      {
+              type triSurfaceMesh;
+              name Flr001; 
+      }
+      Roof001.stl
+      {
+              type triSurfaceMesh;
+              name Roof001; 
+      }
+      Win001.stl
+      {
+              type triSurfaceMesh;
+              name Win001; 
       }
 };
 
@@ -32,23 +62,47 @@ geometry
 
 castellatedMeshControls
 {
-    nCellsBetweenLevels           2;
-    allowFreeStandingZoneFaces    true;
-    maxGlobalCells 				2e8;
-    maxLoadUnbalance              0.25;
-    maxLocalCells 				1e8;
-    minRefinementCells            1;
-    planarAngle 				    30;
-    resolveFeatureAngle 	        30;
+    nCellsBetweenLevels 2;
+    allowFreeStandingZoneFaces true;
+    maxGlobalCells 2e8;
+    maxLoadUnbalance 0.25;
+    maxLocalCells 1e8;
+    minRefinementCells 1;
+    planarAngle 30;
+    resolveFeatureAngle 30;
 
     features
     (
     );
     refinementSurfaces
     {
-        body
+        Wall001
         {
-            level (2 2);
+               level (4 4);
+        }
+        Wall002
+        {
+               level (4 4);
+        }
+        Wall003
+        {
+               level (4 4);
+        }
+        Wall004
+        {
+               level (4 4);
+        }
+        Flr001
+        {
+               level (4 4);
+        }
+        Roof001
+        {
+               level (4 4);
+        }
+        Win001
+        {
+               level (4 4);
         }
     }
     refinementRegions
@@ -59,26 +113,26 @@ castellatedMeshControls
 
 snapControls
 {
-      explicitFeatureSnap     true;
-      implicitFeatureSnap     false;
-	    multiRegionFeatureSnap  false;
-	    nFeatureSnapIter        10;
-      nRelaxIter              5;
-      nSmoothPatch            3;
-      nSolveIter              100;
-      tolerance               2.0;
+      explicitFeatureSnap true;
+      implicitFeatureSnap false;
+      multiRegionFeatureSnap false;
+      nFeatureSnapIter 10;
+      nRelaxIter 5;
+      nSmoothPatch 3;
+      nSolveIter 100;
+      tolerance 2.0;
 }
 
 // Settings for the layer addition.
 addLayersControls
 {
-        relativeSizes             true;
-        expansionRatio            1.2;
+        relativeSizes true;
+        expansionRatio 1.25;
         featureAngle 130;
-        finalLayerThickness       0.5;
-        minThickness              0.1;
-        nGrow                     0;
-        maxFaceThicknessRatio       0.5;
+        minThickness 0.05;
+        nGrow 0;
+        thickness 1;
+        maxFaceThicknessRatio 0.5;
         nSmoothSurfaceNormals 1;
         nSmoothThickness 10;
         maxThicknessToMedialRatio 0.3;
@@ -92,9 +146,33 @@ addLayersControls
         nBufferCellsNoExtrude         0;
         layers
         {
-              body_Wall001
+              Wall001
               {
-                      nSurfaceLayers 3;
+                      nSurfaceLayers 10;
+              }
+              Wall002
+              {
+                      nSurfaceLayers 10;
+              }
+              Wall003
+              {
+                      nSurfaceLayers 10;
+              }
+              Wall004
+              {
+                      nSurfaceLayers 10;
+              }
+              Flr001
+              {
+                      nSurfaceLayers 10;
+              }
+              Roof001
+              {
+                      nSurfaceLayers 10;
+              }
+              Win001
+              {
+                      nSurfaceLayers 10;
               }
       }
 }
