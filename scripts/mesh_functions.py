@@ -1,10 +1,10 @@
 # ----------------------------- import libraries ----------------------------- #
 import os
 import shutil
-
+# ---------------------------------------------------------------------------- #
 def rel(x):
     return os.path.join(os.path.dirname(__file__), x)
-
+# ---------------------------------------------------------------------------- #
 def cleanFolder(x):
     if os.path.exists(x):
         try:
@@ -12,17 +12,17 @@ def cleanFolder(x):
         except OSError as e:
             print("Error: %s : %s" % (x, e.strerror))
     os.mkdir(x)
-
+# ---------------------------------------------------------------------------- #
 def createDirs(casedir):
     cleanFolder(casedir+'/0.orig/')
     cleanFolder(casedir+'/constant/')
     cleanFolder(casedir+'/constant/triSurface')
     cleanFolder(casedir+'/system/')
-
+# ---------------------------------------------------------------------------- #
 def w(f, x):
     f.write(x)
     f.write('\n')
-    
+    # ------------------------------------------------------------------------ #
 def w_header(f,myClass,myObject):
     w(f, '/*--------------------------------*- C++ -*----------------------------------*\\')
     w(f, '| =========                 |                                                 |')
@@ -46,6 +46,79 @@ def w_footer(f):
     w(f, '// ************************************************************************* //')
 # ---------------------------------------------------------------------------- #
 # --------------------------------- BLOCKMESH -------------------------------- #
+# ---------------------------------------------------------------------------- #
+def externalboundariesA(f):
+    w(f, """ 
+patches
+(
+    patch minX
+    (
+        (0 4 7 3)
+    )
+    patch maxX
+    (
+        (2 6 5 1)
+    )
+    patch minY
+    (
+        (1 5 4 0)
+    )
+    patch maxY
+    (
+        (3 7 6 2)
+    )
+    patch minZ
+    (
+        (0 3 2 1)
+    )
+    patch maxZ
+    (
+        (4 5 6 7)
+    )
+);
+      """)
+# ---------------------------------------------------------------------------- #
+def externalboundariesB(f):
+    w(f, """ 
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 3 7 4)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (1 5 6 2)
+        );
+    }
+    ground
+    {
+        type wall;
+        faces
+        (
+            (0 1 2 3)
+        );
+    }
+    frontAndBack
+    {
+        type symmetry;
+        faces
+        (
+            (0 4 5 1)
+            (3 2 6 7)
+            (4 7 6 5)
+        );
+    }
+);
+      """)
+# ---------------------------------------------------------------------------- #
 def create_blockMeshDict(casedir,box_limits):
     with open(casedir+'/system/blockMeshDict', 'w') as f:
         factor = 5
@@ -93,198 +166,239 @@ def create_blockMeshDict(casedir,box_limits):
         w(f, 'edges')
         w(f, '(')
         w(f, ');')
-        w(f, '')
-        w(f, 'patches')
-        w(f, '(')
-        w(f, '    patch minX')
-        w(f, '    (')
-        w(f, '        (0 4 7 3)')
-        w(f, '    )')
-        w(f, '    patch maxX')
-        w(f, '    (')
-        w(f, '        (2 6 5 1)')
-        w(f, '    )')
-        w(f, '    patch minY')
-        w(f, '    (')
-        w(f, '        (1 5 4 0)')
-        w(f, '    )')
-        w(f, '    patch maxY')
-        w(f, '    (')
-        w(f, '        (3 7 6 2)')
-        w(f, '    )')
-        w(f, '    patch minZ')
-        w(f, '    (')
-        w(f, '        (0 3 2 1)')
-        w(f, '    )')
-        w(f, '    patch maxZ')
-        w(f, '    (')
-        w(f, '        (4 5 6 7)')
-        w(f, '    )')
-        w(f, ');') 
-        w(f, '')        
+        externalboundariesB(f)
         w(f, 'mergePatchPairs')        
         w(f, '(')
         w(f, ');')
         w_footer(f)
 # ---------------------------------------------------------------------------- #
-def create_0_U(casedir):
-    with open(casedir+'/0.orig/U', 'w') as f:
-        w_header(f,'volVectorField','U')
-        w(f, 'dimensions      [0 1 -1 0 0 0 0];')
-        w(f, '')
-        w(f, 'internalField   uniform (0 0 0);')
-        w(f, '')
-        w(f, 'boundaryField')
-        w(f, '{')
-        w(f, '    minX')
-        w(f, '    {')
-        w(f, '    type fixedValue;')
-        w(f, '    value (1 0 0);')
-        w(f, '    }\n')
-        w(f, '    maxX')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    minY')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    maxY')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    minZ')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    maxZ')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }')
-        w(f, '}')
-        w_footer(f)
+def ctlDict_parameters(f):
+    w(f, """ 
+application     simpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         400;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+      """)
 # ---------------------------------------------------------------------------- #
-def create_0_p(casedir):
-    with open(casedir+'/0.orig/p', 'w') as f:
-        w_header(f,'volScalarField','p')
-        w(f, 'dimensions      [0 2 -2 0 0 0 0];')
-        w(f, '')
-        w(f, 'internalField   uniform 0;')
-        w(f, '')
-        w(f, 'boundaryField')
-        w(f, '{')
-        w(f, '    minX')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    maxX')
-        w(f, '    {')
-        w(f, '    type fixedValue;')
-        w(f, '    value uniform 0;')
-        w(f, '    }\n')
-        w(f, '    minY')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    maxY')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    minZ')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '    maxZ')
-        w(f, '    {')
-        w(f, '    type zeroGradient;')
-        w(f, '    }\n')
-        w(f, '}')
-        w_footer(f)
-# ----------------------------------------------------------------------------\n #
 def create_ctlDict(casedir):
     with open(casedir+'/system/controlDict', 'w') as f:
         w_header(f,'dictionary','controlDict')
-        w(f, 'application     icoFoam;\n')
-        w(f, 'startFrom       latestTime;\n')
-        w(f, 'startTime       0;')
-        w(f, 'stopAt          endTime;\n')
-        w(f, 'endTime         10;')
-        w(f, 'deltaT          0.05;\n')
-        w(f, 'writeControl    timeStep;\n')
-        w(f, 'writeInterval   20;')
-        w(f, 'purgeWrite      0;\n')
-        w(f, 'writeFormat     ascii;\n')
-        w(f, 'writePrecision  6;')
-        w(f, 'writeCompression off;\n')
-        w(f, 'timeFormat      general;\n')
-        w(f, 'timePrecision   6;\n')
-        w(f, 'runTimeModifiable true;')
+        ctlDict_parameters(f)
+        # w(f, 'application     icoFoam;\n')
+        # w(f, 'startFrom       latestTime;\n')
+        # w(f, 'startTime       0;')
+        # w(f, 'stopAt          endTime;\n')
+        # w(f, 'endTime         10;')
+        # w(f, 'deltaT          0.05;\n')
+        # w(f, 'writeControl    timeStep;\n')
+        # w(f, 'writeInterval   20;')
+        # w(f, 'purgeWrite      0;\n')
+        # w(f, 'writeFormat     ascii;\n')
+        # w(f, 'writePrecision  6;')
+        # w(f, 'writeCompression off;\n')
+        # w(f, 'timeFormat      general;\n')
+        # w(f, 'timePrecision   6;\n')
+        # w(f, 'runTimeModifiable true;')
         w_footer(f)
 # ---------------------------------------------------------------------------- #
 # ------------------------------ SNAPPY HEX MESH ----------------------------- #
+# ---------------------------------------------------------------------------- #
+def fvSch_parameters(f):
+    w(f, """ 
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+
+    limited         cellLimited Gauss linear 1;
+    grad(U)         $limited;
+    grad(k)         $limited;
+    grad(epsilon)   $limited;
+}
+
+divSchemes
+{
+    default         none;
+
+    div(phi,U)      bounded Gauss linearUpwind limited;
+
+    turbulence      bounded Gauss limitedLinear 1;
+    div(phi,k)      $turbulence;
+    div(phi,epsilon) $turbulence;
+
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+wallDist
+{
+    method          meshWave;
+}
+
+      """)
+# ---------------------------------------------------------------------------- #
 def create_fvSch(casedir):
    with open(casedir+'/system/fvSchemes', 'w') as f:
         w_header(f,'dictionary', 'fvSchemes')
-        w(f, 'ddtSchemes')
-        w(f, '{')
-        w(f, '      default         Euler;')
-        w(f, '}')
-        w(f, 'gradSchemes')
-        w(f, '{')
-        w(f, '      default         Gauss linear;')
-        w(f, '      grad(p)         Gauss linear;')
-        w(f, '}')
-        w(f, 'divSchemes')
-        w(f, '{')
-        w(f, '      default         none;')
-        w(f, '      div(phi,U)      Gauss linear;')
-        w(f, '}')
-        w(f, 'laplacianSchemes')
-        w(f, '{')
-        w(f, '      default         Gauss linear orthogonal;')
-        w(f, '}')
-        w(f, 'interpolationSchemes')
-        w(f, '{')
-        w(f, '      default         linear;')
-        w(f, '}')
-        w(f, 'snGradSchemes')
-        w(f, '{')
-        w(f, '      default         orthogonal;')
-        w(f, '}')
+        fvSch_parameters(f)
+        # w(f, 'ddtSchemes')
+        # w(f, '{')
+        # w(f, '      default         Euler;')
+        # w(f, '}')
+        # w(f, 'gradSchemes')
+        # w(f, '{')
+        # w(f, '      default         Gauss linear;')
+        # w(f, '      grad(p)         Gauss linear;')
+        # w(f, '}')
+        # w(f, 'divSchemes')
+        # w(f, '{')
+        # w(f, '      default         none;')
+        # w(f, '      div(phi,U)      Gauss linear;')
+        # w(f, '}')
+        # w(f, 'laplacianSchemes')
+        # w(f, '{')
+        # w(f, '      default         Gauss linear orthogonal;')
+        # w(f, '}')
+        # w(f, 'interpolationSchemes')
+        # w(f, '{')
+        # w(f, '      default         linear;')
+        # w(f, '}')
+        # w(f, 'snGradSchemes')
+        # w(f, '{')
+        # w(f, '      default         orthogonal;')
+        # w(f, '}')
         w_footer(f)
+# ---------------------------------------------------------------------------- #
+def fvSol_parameters(f):
+    w(f, """ 
+solvers
+{
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+
+    "(U|k|omega|epsilon)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+}
+
+SIMPLE
+{
+    residualControl
+    {
+        p               1e-4;
+        U               1e-4;
+        "(k|omega|epsilon)" 1e-4;
+    }
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 10;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+    }
+    equations
+    {
+        U               0.7;
+        "(k|omega|epsilon).*" 0.7;
+    }
+}      
+      """)
 # ---------------------------------------------------------------------------- #
 def create_fvSol(casedir):
    with open(casedir+'/system/fvSolution', 'w') as f:
        w_header(f,'dictionary','fvSolution')
-       w(f, 'solvers')
-       w(f, '{')
-       w(f, '    p')
-       w(f, '    {')
-       w(f, '        solver          PCG;')
-       w(f, '        preconditioner  DIC;')
-       w(f, '        tolerance       1e-06;')
-       w(f, '        relTol          0.05;')
-       w(f, '    }')
-       w(f, '    pFinal')
-       w(f, '    {')
-       w(f, '        $p;')
-       w(f, '        relTol          0;')
-       w(f, '    }')
-       w(f, '    U')
-       w(f, '    {')
-       w(f, '        solver          smoothSolver;')
-       w(f, '        smoother        symGaussSeidel;')
-       w(f, '        tolerance       1e-05;')
-       w(f, '        relTol          0;')
-       w(f, '    }')
-       w(f, '}')
-       w(f, 'PISO')
-       w(f, '{')
-       w(f, '    nCorrectors     2;')
-       w(f, '    nNonOrthogonalCorrectors 0;')
-       w(f, '    pRefCell        0;')
-       w(f, '    pRefValue       0;')
-       w(f, '}')
+       fvSol_parameters(f)
+    #    w(f, 'solvers')
+    #    w(f, '{')
+    #    w(f, '    p')
+    #    w(f, '    {')
+    #    w(f, '        solver          PCG;')
+    #    w(f, '        preconditioner  DIC;')
+    #    w(f, '        tolerance       1e-06;')
+    #    w(f, '        relTol          0.05;')
+    #    w(f, '    }')
+    #    w(f, '    pFinal')
+    #    w(f, '    {')
+    #    w(f, '        $p;')
+    #    w(f, '        relTol          0;')
+    #    w(f, '    }')
+    #    w(f, '    U')
+    #    w(f, '    {')
+    #    w(f, '        solver          smoothSolver;')
+    #    w(f, '        smoother        symGaussSeidel;')
+    #    w(f, '        tolerance       1e-05;')
+    #    w(f, '        relTol          0;')
+    #    w(f, '    }')
+    #    w(f, '}')
+    #    w(f, 'PISO')
+    #    w(f, '{')
+    #    w(f, '    nCorrectors     2;')
+    #    w(f, '    nNonOrthogonalCorrectors 0;')
+    #    w(f, '    pRefCell        0;')
+    #    w(f, '    pRefValue       0;')
+    #    w(f, '}')
        w_footer(f)
 # ---------------------------------------------------------------------------- #
 def get_geometry_files(stl_files):
@@ -323,29 +437,33 @@ def box_geometry(f,H,box_limits,k,i):
     x = str(xmax[0]) ; y = str(xmax[1]) ; z = str(xmax[2]);
     w(f, '              max ( '+x+' '+y+' '+z+' );')
     w(f, '      }')
+# ---------------------------------------------------------------------------- #
 def box_refinement(f,n):
         w(f, '        refinementBox'+str(n))
         w(f, '        {')
         w(f, '            mode inside;')
         w(f, '            levels (('+str(n)+' '+str(n)+'));')
         w(f, '        }')
+# ---------------------------------------------------------------------------- #
 def stl_geometry(f,file):
     w(f, '      '+file+'.stl')
     w(f, '      {')
     w(f, '              type triSurfaceMesh;')
     w(f, '              name '+file+'; ')
     w(f, '      }')
+# ---------------------------------------------------------------------------- #
 def stl_refinement_surfaces(f,file):
     w(f,'        '+file)
     w(f,'        {')
-    w(f,'               level (4 4);')
+    w(f,'               level (3 3);')
     w(f,'        }')
+# ---------------------------------------------------------------------------- #
 def stl_refinement_layers(f,file):
     w(f, '              '+file)
     w(f, '              {')
     w(f, '                      nSurfaceLayers 10;')
     w(f, '              }')
-       
+# ---------------------------------------------------------------------------- #
 def create_snappyHexMeshDict(casedir,box_limits,stl_files):
     with open(casedir+'/system/snappyHexMeshDict', 'w') as f:
         # ----------------------------- variables ---------------------------- #
@@ -430,7 +548,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         # ------------------------- basic parameters ------------------------- #
         w(f, '        relativeSizes true;')
         w(f, '        expansionRatio 1.25;')
-        w(f, '        featureAngle 130;')
+        w(f, '        featureAngle 180;')
         # w(f, '        featureAngle              270;	')
         # w(f, '        finalLayerThickness       0.5;')
         # w(f, '        firstLayerThickness       0.1;')
@@ -439,14 +557,14 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         # w(f, '        nSurfaceLayers 			3;')
         w(f, '        thickness 1;')
         # ----------------------------- advanced 1---------------------------- #
-        w(f, '        maxFaceThicknessRatio 0.5;') # Stop layer growth on highly warped cells
+        w(f, '        maxFaceThicknessRatio 0.25;') # Stop layer growth on highly warped cells
         # ------------------- advanced: patch displacement ------------------- #
-        w(f, '        nSmoothSurfaceNormals 1;')
+        w(f, '        nSmoothSurfaceNormals 0;')
         w(f, '        nSmoothThickness 10;')
         # ------------------ advanced: medial axis analysis ------------------ #
         w(f, '        maxThicknessToMedialRatio 0.3;') #
-        w(f, '        minMedialAxisAngle 90;')
-        w(f, '        minMedianAxisAngle 90;')
+        w(f, '        minMedialAxisAngle 120;')
+        w(f, '        minMedianAxisAngle 120;')
         # w(f, '        nMedialAxisIter             10;')
         # w(f, '        nSmoothDisplacement 		    90;')
         # w(f, '        nSmoothNormals 				15;')
@@ -456,7 +574,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '        nRelaxedIter 20;')
         w(f, '        nRelaxIter 5;') #5 or 25
         w(f, '        slipFeatureAngle 30;') #130 or 30
-        w(f, '        nBufferCellsNoExtrude         0;') 
+        w(f, '        nBufferCellsNoExtrude 0;') 
         
         # w(f, '        additionalReporting         true;')
         # ------------------------------ unknown ----------------------------- #
@@ -465,7 +583,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '        layers')
         w(f, '        {')
         for file in stl_files:
-            stl_refinement_layers(f,file) 
+            stl_refinement_layers(f,file)
         w(f, '      }')
         w(f, '}')
         w(f, '')
@@ -475,7 +593,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '      #include \"meshQualityDict\"')
         w(f, '      relaxed')
         w(f, '      {')
-        w(f, '              maxNonOrtho 75;')
+        w(f, '              maxNonOrtho 80;')
         w(f, '      }')
         w(f, '      nSmoothScale 4;')
         w(f, '      errorReduction 0.75;')
@@ -509,21 +627,273 @@ def create_decomposeParDict(casedir):
         w(f, 'method          scotch;')
         w_footer(f)
 # ---------------------------------------------------------------------------- #
+# -------------------------------- FOR SOLVER -------------------------------- #
+# ---------------------------------------------------------------------------- #
 def create_transProp(casedir):  
     with open(casedir+'/constant/transportProperties', 'w') as f:
-        w_header(f)
-        w(f, 'FoamFile')
-        w(f, '{')
-        w(f, '    version     2.0;')
-        w(f, '    format      ascii;')
-        w(f, '    class       dictionary;')
-        w(f, '    object      transportProperties;')
-        w(f, '}')
-        w(f, '// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //')
-        w(f, '')
-        w(f, 'nu              0.01;')
-        w(f, '\n')
-        w(f, '// ************************************************************************* //')
+        w_header(f,'dictionary','transportProperties')
+        w(f,""" 
+transportModel  Newtonian;
+
+nu              1.5e-05;
+          """)
+        # w(f, 'nu              0.01;')
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_turbProp(casedir):  
+    with open(casedir+'/constant/turbulenceProperties', 'w') as f:
+        w_header(f,'dictionary','turbulenceProperties')
+        w(f,""" 
+simulationType      RAS;
+
+RAS
+{
+    RASModel        kEpsilon;
+
+    turbulence      on;
+
+    printCoeffs     on;
+}
+          """)
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_0_U(casedir):
+    with open(casedir+'/0.orig/U', 'w') as f:
+        w_header(f,'volVectorField','U')
+        w(f, """ 
+Uinlet          (10 0 0);
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform $Uinlet;
+    }
+
+    outlet
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+
+    wall
+    {
+        type            noSlip;
+    }
+    
+    #includeEtc "caseDicts/setConstraintTypes"
+}
+          """)
+        # w(f, 'dimensions [0 1 -1 0 0 0 0];')
+        # w(f, '')
+        # w(f, 'internalField uniform (0 0 0);')
+        # w(f, '')
+        # w(f, 'boundaryField')
+        # w(f, '{')
+        # w(f, '    minX')
+        # w(f, '    {')
+        # w(f, '          type fixedValue;')
+        # w(f, '          value (1 0 0);')
+        # w(f, '    }\n')
+        # w(f, '    maxX')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    minY')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    maxY')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    minZ')
+        # w(f, '    {')
+        # w(f, '          type noSlip;')
+        # w(f, '    }\n')
+        # w(f, '    maxZ')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }')
+        # w(f, '}')
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_0_p(casedir):
+    with open(casedir+'/0.orig/p', 'w') as f:
+        w_header(f,'volScalarField','p')
+        w(f, """ 
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+        type            zeroGradient;
+    }
+
+    outlet
+    {
+        type            totalPressure;
+        p0              uniform 0;
+    }
+
+    wall
+    {
+        type            zeroGradient;
+    }
+    
+    #includeEtc "caseDicts/setConstraintTypes"
+}
+
+          """)
+        # w(f, 'dimensions [0 2 -2 0 0 0 0];')
+        # w(f, '')
+        # w(f, 'internalField uniform 0;')
+        # w(f, '')
+        # w(f, 'boundaryField')
+        # w(f, '{')
+        # w(f, '    minX')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    maxX')
+        # w(f, '    {')
+        # w(f, '          type fixedValue;')
+        # w(f, '          value uniform 0;')
+        # w(f, '    }\n')
+        # w(f, '    minY')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    maxY')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    minZ')
+        # w(f, '    {')
+        # w(f, '          type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '    maxZ')
+        # w(f, '    {')
+        # w(f, '      type zeroGradient;')
+        # w(f, '    }\n')
+        # w(f, '}')
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_0_k(casedir):
+    with open(casedir+'/0.orig/k', 'w') as f:
+        w_header(f,'volScalarField','k')
+        w(f, """ 
+kInlet          1.5;   // approx k = 1.5*(I*U)^2 ; I = 0.1
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform $kInlet;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform $kInlet;
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform $kInlet;
+        value           uniform $kInlet;
+    }
+
+    wall
+    {
+        type            kqRWallFunction;
+        value           uniform $kInlet;
+    }
+    
+    #includeEtc "caseDicts/setConstraintTypes"
+
+}
+        """)
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_0_epsilon(casedir):
+    with open(casedir+'/0.orig/epsilon', 'w') as f:
+        w_header(f,'volScalarField','epsilon')
+        w(f, """ 
+epsilonInlet  0.03; // Cmu^0.75 * k^1.5 / L ; L =10
+
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform $epsilonInlet;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform $epsilonInlet;
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform $epsilonInlet;
+        value           uniform $epsilonInlet;
+    }
+
+    wall
+    {
+        type            epsilonWallFunction;
+        value           uniform $epsilonInlet;
+    }
+    
+    #includeEtc "caseDicts/setConstraintTypes"
+
+}
+        """)
+        w_footer(f)
+# ---------------------------------------------------------------------------- #
+def create_0_nut(casedir):
+    with open(casedir+'/0.orig/nut', 'w') as f:
+        w_header(f,'volScalarField','nut')
+        w(f, """ 
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    outlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    wall
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+    
+    #includeEtc "caseDicts/setConstraintTypes"
+
+}
+        """)
+        w_footer(f)
 # ---------------------------------------------------------------------------- #
 def createDirsAndFiles(casedir, box_limits, stl_files):
     # ----------------------------- for blockMesh ---------------------------- #
@@ -538,8 +908,12 @@ def createDirsAndFiles(casedir, box_limits, stl_files):
     create_snappyHexMeshDict(casedir,box_limits,stl_files)
     create_meshQualityDict(casedir)
     create_decomposeParDict(casedir)
-    # ------------------------------------------------------------------------ #
-    # create_0_U(casedir)
-    # create_0_p(casedir)
-    # create_transProp(casedir)
+    # ------------------------------ for solver ------------------------------ #
+    create_transProp(casedir)
+    create_turbProp(casedir)
+    create_0_U(casedir)
+    create_0_p(casedir)
+    create_0_k(casedir)
+    create_0_epsilon(casedir)
+    create_0_nut(casedir)
     

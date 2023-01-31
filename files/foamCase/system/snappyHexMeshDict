@@ -78,31 +78,31 @@ castellatedMeshControls
     {
         Wall001
         {
-               level (4 4);
+               level (3 3);
         }
         Wall002
         {
-               level (4 4);
+               level (3 3);
         }
         Wall003
         {
-               level (4 4);
+               level (3 3);
         }
         Wall004
         {
-               level (4 4);
+               level (3 3);
         }
         Flr001
         {
-               level (4 4);
+               level (3 3);
         }
         Roof001
         {
-               level (4 4);
+               level (3 3);
         }
         Win001
         {
-               level (4 4);
+               level (3 3);
         }
     }
     refinementRegions
@@ -128,22 +128,22 @@ addLayersControls
 {
         relativeSizes true;
         expansionRatio 1.25;
-        featureAngle 130;
+        featureAngle 180;
         minThickness 0.05;
         nGrow 0;
         thickness 1;
-        maxFaceThicknessRatio 0.5;
-        nSmoothSurfaceNormals 1;
+        maxFaceThicknessRatio 0.25;
+        nSmoothSurfaceNormals 0;
         nSmoothThickness 10;
         maxThicknessToMedialRatio 0.3;
-        minMedialAxisAngle 90;
-        minMedianAxisAngle 90;
+        minMedialAxisAngle 120;
+        minMedianAxisAngle 120;
         nSmoothNormals 30;
         nLayerIter 50;
         nRelaxedIter 20;
         nRelaxIter 5;
         slipFeatureAngle 30;
-        nBufferCellsNoExtrude         0;
+        nBufferCellsNoExtrude 0;
         layers
         {
               Wall001
@@ -182,7 +182,7 @@ meshQualityControls
       #include "meshQualityDict"
       relaxed
       {
-              maxNonOrtho 75;
+              maxNonOrtho 80;
       }
       nSmoothScale 4;
       errorReduction 0.75;
