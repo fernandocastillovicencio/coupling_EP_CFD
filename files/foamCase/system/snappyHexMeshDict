@@ -56,6 +56,13 @@ geometry
               type triSurfaceMesh;
               name Win001; 
       }
+   ground
+   {
+           type searchableDisk;
+           origin (0 0 0);
+           normal (0 0 1);
+           radius 76.2;
+   }
 };
 
 
@@ -128,7 +135,7 @@ addLayersControls
 {
         relativeSizes true;
         expansionRatio 1.25;
-        featureAngle 180;
+        featureAngle 130;
         minThickness 0.05;
         nGrow 0;
         thickness 1;
@@ -174,7 +181,7 @@ addLayersControls
               {
                       nSurfaceLayers 10;
               }
-      }
+        }
 }
 
 meshQualityControls

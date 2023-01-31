@@ -445,6 +445,28 @@ def box_refinement(f,n):
         w(f, '            levels (('+str(n)+' '+str(n)+'));')
         w(f, '        }')
 # ---------------------------------------------------------------------------- #
+def ground_region(f,r):
+    w(f,'   ground')
+    w(f,'   {')
+    w(f,'           type searchableDisk;')
+    w(f,'           origin (0 0 0);')
+    w(f,'           normal (0 0 1);')
+    w(f,'           radius '+str(r)+';')
+    w(f,'   }')
+# ---------------------------------------------------------------------------- #
+def ground_refinement(f):
+    w(f, '      ground')
+    w(f, '      {')
+    w(f, '             mode distance;')
+    w(f, '             levels ((2 2));')
+    w(f, '      }')
+# ---------------------------------------------------------------------------- #
+def ground_layers(f):
+    w(f, '              ground')
+    w(f, '              {')
+    w(f, '                      nSurfaceLayers 10;')
+    w(f, '              }')
+# ---------------------------------------------------------------------------- #
 def stl_geometry(f,file):
     w(f, '      '+file+'.stl')
     w(f, '      {')
@@ -474,7 +496,6 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         box_scales = [1]*n
         for i in range(n):
             box_scales[i]*=r**(i)
-        
         # -------------------------------------------------------------------- #
         w_header(f,'dictionary','snappyHexMeshDict')
         # ----------------------- initial configuration ---------------------- #
@@ -484,10 +505,13 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '\n')
         w(f, 'geometry')
         w(f, '{')
+        # -------------------------- read stl files -------------------------- #
         for file in stl_files:
             stl_geometry(f,file)
-        # for i in range(len(box_scales)):
-        #     box_geometry(f,H,box_limits,box_scales[i],str(i+1))
+        # --------------------------- insert ground -------------------------- #
+        r = factor*max(box_limits[1]-box_limits[0],box_limits[3]-box_limits[2],\
+            box_limits[5]-box_limits[4])
+        ground_region(f,r)
         w(f, '};')
         w(f, '')
         w(f, '')
@@ -516,8 +540,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '    }')
         w(f, '    refinementRegions')
         w(f, '    {')
-        # for i in range(len(box_scales)):
-        #     box_refinement(f,i+1)
+        # ground_refinement(f)
         w(f, '    }')
         locx = box_limits[1]+factor/2*H
         locy = box_limits[3]+factor/2*H
@@ -548,7 +571,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         # ------------------------- basic parameters ------------------------- #
         w(f, '        relativeSizes true;')
         w(f, '        expansionRatio 1.25;')
-        w(f, '        featureAngle 180;')
+        w(f, '        featureAngle 130;')
         # w(f, '        featureAngle              270;	')
         # w(f, '        finalLayerThickness       0.5;')
         # w(f, '        firstLayerThickness       0.1;')
@@ -584,7 +607,8 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '        {')
         for file in stl_files:
             stl_refinement_layers(f,file)
-        w(f, '      }')
+        # ground_layers(f)
+        w(f, '        }')
         w(f, '}')
         w(f, '')
         # ----------------------- mesh quality controls ---------------------- #

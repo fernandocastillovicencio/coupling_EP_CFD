@@ -17,7 +17,7 @@ def mkRun():
     decomposePar -force
     mpirun --use-hwthread-cpus -np 26 simpleFoam -parallel > log.foamRun
     reconstructPar
-    paraFoam
+    # paraFoam
     """
     os.system(solver_commands)
     # ------------------------------------------------------------------------ #
