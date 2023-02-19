@@ -15,37 +15,68 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-kInlet          1.5;   // approx k = 1.5*(I*U)^2 ; I = 0.1
-
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform $kInlet;
+internalField   uniform 0.1;
 
 boundaryField
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform $kInlet;
-    }
-
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform $kInlet;
-        value           uniform $kInlet;
-    }
-
-    wall
+    floor
     {
         type            kqRWallFunction;
-        value           uniform $kInlet;
+        value           uniform 0.1;
+    }
+
+    ceiling
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+
+    fixedWalls
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
-
-}
-        
+    
+    Flr001
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Roof001
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Wall001
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Wall002
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Wall003
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Wall004
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+    Win001
+    {
+        type            kqRWallFunction;
+        value           uniform 0.1;
+    }
+}          
+          
 
 
 // ************************************************************************* //

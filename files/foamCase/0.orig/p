@@ -15,31 +15,66 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-dimensions      [0 2 -2 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 100000;
 
 boundaryField
 {
-    inlet
+    floor
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField;
     }
 
-    outlet
+    ceiling
     {
-        type            totalPressure;
-        p0              uniform 0;
+        type            calculated;
+        value           $internalField;
     }
 
-    wall
+    fixedWalls
     {
-        type            zeroGradient;
+        type            calculated;
+        value           $internalField;
     }
-    
-    #includeEtc "caseDicts/setConstraintTypes"
-}
 
+    Flr001
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Roof001
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Wall001
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Wall002
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Wall003
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Wall004
+    {
+        type            calculated;
+        value           $internalField;
+    }
+    Win001
+    {
+        type            calculated;
+        value           $internalField;
+    }
+}          
           
 
 

@@ -1,12 +1,12 @@
 import os
 from scripts.make_geometry import mkGeometry
 from scripts.make_mesh import mkMesh
-from scripts.make_run import mkRun
+from scripts.make_solver import mkSolver
 # --------------------------------- PREAMBLE --------------------------------- #
 os.chdir('/home/fernando/workspace/research/phd/webapp/wip/coupling_EP_CFD')
 # --------------------------------- GEOMETRY --------------------------------- #
-mkGeometry()
+# mkGeometry()
 # ----------------------------------- MESH ----------------------------------- #
 mkMesh()
 # ------------------------------------ RUN ----------------------------------- #
-mkRun()
+mkSolver()

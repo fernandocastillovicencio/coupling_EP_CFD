@@ -10,71 +10,71 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      nut;
+    object      T;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-dimensions      [0 2 -1 0 0 0 0];
+dimensions      [0 0 0 1 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 300;
 
 boundaryField
 {
     floor
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 300.0;
     }
 
     ceiling
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 300.0;
     }
 
     fixedWalls
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            zeroGradient;
     }
-    
+
     Flr001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Roof001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Wall001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Wall002
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Wall003
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Wall004
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
     Win001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedValue;
+        value           uniform 500.0;
     }
-}          
+    
+}
           
 
 

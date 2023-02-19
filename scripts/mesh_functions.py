@@ -119,6 +119,40 @@ boundary
 );
       """)
 # ---------------------------------------------------------------------------- #
+def externalboundariesC(f):
+    w(f, """ 
+boundary
+(
+    floor
+    {
+        type wall;
+        faces
+        (
+            ( 0 1 2 3 )
+        );
+    }
+    ceiling
+    {
+        type wall;
+        faces
+        (
+            ( 4 5 6 7 )
+        );
+    }
+    fixedWalls
+    {
+        type wall;
+        faces
+        (
+            ( 0 4 7 3 )
+            ( 2 6 5 1 )
+            ( 1 5 4 0 )
+            ( 3 7 6 2 )
+        );
+    }
+);
+      """)
+# ---------------------------------------------------------------------------- #
 def create_blockMeshDict(casedir,box_limits):
     with open(casedir+'/system/blockMeshDict', 'w') as f:
         factor = 5
@@ -166,7 +200,7 @@ def create_blockMeshDict(casedir,box_limits):
         w(f, 'edges')
         w(f, '(')
         w(f, ');')
-        externalboundariesB(f)
+        externalboundariesC(f)
         w(f, 'mergePatchPairs')        
         w(f, '(')
         w(f, ');')
@@ -650,274 +684,274 @@ def create_decomposeParDict(casedir):
         w(f, 'numberOfSubdomains 26;')
         w(f, 'method          scotch;')
         w_footer(f)
-# ---------------------------------------------------------------------------- #
-# -------------------------------- FOR SOLVER -------------------------------- #
-# ---------------------------------------------------------------------------- #
-def create_transProp(casedir):  
-    with open(casedir+'/constant/transportProperties', 'w') as f:
-        w_header(f,'dictionary','transportProperties')
-        w(f,""" 
-transportModel  Newtonian;
+# # ---------------------------------------------------------------------------- #
+# # -------------------------------- FOR SOLVER -------------------------------- #
+# # ---------------------------------------------------------------------------- #
+# def create_transProp(casedir):  
+#     with open(casedir+'/constant/transportProperties', 'w') as f:
+#         w_header(f,'dictionary','transportProperties')
+#         w(f,""" 
+# transportModel  Newtonian;
 
-nu              1.5e-05;
-          """)
-        # w(f, 'nu              0.01;')
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_turbProp(casedir):  
-    with open(casedir+'/constant/turbulenceProperties', 'w') as f:
-        w_header(f,'dictionary','turbulenceProperties')
-        w(f,""" 
-simulationType      RAS;
+# nu              1.5e-05;
+#           """)
+#         # w(f, 'nu              0.01;')
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_turbProp(casedir):  
+#     with open(casedir+'/constant/turbulenceProperties', 'w') as f:
+#         w_header(f,'dictionary','turbulenceProperties')
+#         w(f,""" 
+# simulationType      RAS;
 
-RAS
-{
-    RASModel        kEpsilon;
+# RAS
+# {
+#     RASModel        kEpsilon;
 
-    turbulence      on;
+#     turbulence      on;
 
-    printCoeffs     on;
-}
-          """)
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_0_U(casedir):
-    with open(casedir+'/0.orig/U', 'w') as f:
-        w_header(f,'volVectorField','U')
-        w(f, """ 
-Uinlet          (10 0 0);
+#     printCoeffs     on;
+# }
+#           """)
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_0_U(casedir):
+#     with open(casedir+'/0.orig/U', 'w') as f:
+#         w_header(f,'volVectorField','U')
+#         w(f, """ 
+# Uinlet          (10 0 0);
 
-dimensions      [0 1 -1 0 0 0 0];
+# dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0);
+# internalField   uniform (0 0 0);
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform $Uinlet;
-    }
+# boundaryField
+# {
+#     inlet
+#     {
+#         type            fixedValue;
+#         value           uniform $Uinlet;
+#     }
 
-    outlet
-    {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
-    }
+#     outlet
+#     {
+#         type            pressureInletOutletVelocity;
+#         value           uniform (0 0 0);
+#     }
 
-    wall
-    {
-        type            noSlip;
-    }
+#     wall
+#     {
+#         type            noSlip;
+#     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
-}
-          """)
-        # w(f, 'dimensions [0 1 -1 0 0 0 0];')
-        # w(f, '')
-        # w(f, 'internalField uniform (0 0 0);')
-        # w(f, '')
-        # w(f, 'boundaryField')
-        # w(f, '{')
-        # w(f, '    minX')
-        # w(f, '    {')
-        # w(f, '          type fixedValue;')
-        # w(f, '          value (1 0 0);')
-        # w(f, '    }\n')
-        # w(f, '    maxX')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    minY')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    maxY')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    minZ')
-        # w(f, '    {')
-        # w(f, '          type noSlip;')
-        # w(f, '    }\n')
-        # w(f, '    maxZ')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }')
-        # w(f, '}')
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_0_p(casedir):
-    with open(casedir+'/0.orig/p', 'w') as f:
-        w_header(f,'volScalarField','p')
-        w(f, """ 
-dimensions      [0 2 -2 0 0 0 0];
+#     #includeEtc "caseDicts/setConstraintTypes"
+# }
+#           """)
+#         # w(f, 'dimensions [0 1 -1 0 0 0 0];')
+#         # w(f, '')
+#         # w(f, 'internalField uniform (0 0 0);')
+#         # w(f, '')
+#         # w(f, 'boundaryField')
+#         # w(f, '{')
+#         # w(f, '    minX')
+#         # w(f, '    {')
+#         # w(f, '          type fixedValue;')
+#         # w(f, '          value (1 0 0);')
+#         # w(f, '    }\n')
+#         # w(f, '    maxX')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    minY')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    maxY')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    minZ')
+#         # w(f, '    {')
+#         # w(f, '          type noSlip;')
+#         # w(f, '    }\n')
+#         # w(f, '    maxZ')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }')
+#         # w(f, '}')
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_0_p(casedir):
+#     with open(casedir+'/0.orig/p', 'w') as f:
+#         w_header(f,'volScalarField','p')
+#         w(f, """ 
+# dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 0;
+# internalField   uniform 0;
 
-boundaryField
-{
-    inlet
-    {
-        type            zeroGradient;
-    }
+# boundaryField
+# {
+#     inlet
+#     {
+#         type            zeroGradient;
+#     }
 
-    outlet
-    {
-        type            totalPressure;
-        p0              uniform 0;
-    }
+#     outlet
+#     {
+#         type            totalPressure;
+#         p0              uniform 0;
+#     }
 
-    wall
-    {
-        type            zeroGradient;
-    }
+#     wall
+#     {
+#         type            zeroGradient;
+#     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
-}
+#     #includeEtc "caseDicts/setConstraintTypes"
+# }
 
-          """)
-        # w(f, 'dimensions [0 2 -2 0 0 0 0];')
-        # w(f, '')
-        # w(f, 'internalField uniform 0;')
-        # w(f, '')
-        # w(f, 'boundaryField')
-        # w(f, '{')
-        # w(f, '    minX')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    maxX')
-        # w(f, '    {')
-        # w(f, '          type fixedValue;')
-        # w(f, '          value uniform 0;')
-        # w(f, '    }\n')
-        # w(f, '    minY')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    maxY')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    minZ')
-        # w(f, '    {')
-        # w(f, '          type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '    maxZ')
-        # w(f, '    {')
-        # w(f, '      type zeroGradient;')
-        # w(f, '    }\n')
-        # w(f, '}')
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_0_k(casedir):
-    with open(casedir+'/0.orig/k', 'w') as f:
-        w_header(f,'volScalarField','k')
-        w(f, """ 
-kInlet          1.5;   // approx k = 1.5*(I*U)^2 ; I = 0.1
+#           """)
+#         # w(f, 'dimensions [0 2 -2 0 0 0 0];')
+#         # w(f, '')
+#         # w(f, 'internalField uniform 0;')
+#         # w(f, '')
+#         # w(f, 'boundaryField')
+#         # w(f, '{')
+#         # w(f, '    minX')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    maxX')
+#         # w(f, '    {')
+#         # w(f, '          type fixedValue;')
+#         # w(f, '          value uniform 0;')
+#         # w(f, '    }\n')
+#         # w(f, '    minY')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    maxY')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    minZ')
+#         # w(f, '    {')
+#         # w(f, '          type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '    maxZ')
+#         # w(f, '    {')
+#         # w(f, '      type zeroGradient;')
+#         # w(f, '    }\n')
+#         # w(f, '}')
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_0_k(casedir):
+#     with open(casedir+'/0.orig/k', 'w') as f:
+#         w_header(f,'volScalarField','k')
+#         w(f, """ 
+# kInlet          1.5;   // approx k = 1.5*(I*U)^2 ; I = 0.1
 
-dimensions      [0 2 -2 0 0 0 0];
+# dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform $kInlet;
+# internalField   uniform $kInlet;
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform $kInlet;
-    }
+# boundaryField
+# {
+#     inlet
+#     {
+#         type            fixedValue;
+#         value           uniform $kInlet;
+#     }
 
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform $kInlet;
-        value           uniform $kInlet;
-    }
+#     outlet
+#     {
+#         type            inletOutlet;
+#         inletValue      uniform $kInlet;
+#         value           uniform $kInlet;
+#     }
 
-    wall
-    {
-        type            kqRWallFunction;
-        value           uniform $kInlet;
-    }
+#     wall
+#     {
+#         type            kqRWallFunction;
+#         value           uniform $kInlet;
+#     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
+#     #includeEtc "caseDicts/setConstraintTypes"
 
-}
-        """)
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_0_epsilon(casedir):
-    with open(casedir+'/0.orig/epsilon', 'w') as f:
-        w_header(f,'volScalarField','epsilon')
-        w(f, """ 
-epsilonInlet  0.03; // Cmu^0.75 * k^1.5 / L ; L =10
+# }
+#         """)
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_0_epsilon(casedir):
+#     with open(casedir+'/0.orig/epsilon', 'w') as f:
+#         w_header(f,'volScalarField','epsilon')
+#         w(f, """ 
+# epsilonInlet  0.03; // Cmu^0.75 * k^1.5 / L ; L =10
 
-dimensions      [0 2 -3 0 0 0 0];
+# dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform $epsilonInlet;
+# internalField   uniform $epsilonInlet;
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform $epsilonInlet;
-    }
+# boundaryField
+# {
+#     inlet
+#     {
+#         type            fixedValue;
+#         value           uniform $epsilonInlet;
+#     }
 
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform $epsilonInlet;
-        value           uniform $epsilonInlet;
-    }
+#     outlet
+#     {
+#         type            inletOutlet;
+#         inletValue      uniform $epsilonInlet;
+#         value           uniform $epsilonInlet;
+#     }
 
-    wall
-    {
-        type            epsilonWallFunction;
-        value           uniform $epsilonInlet;
-    }
+#     wall
+#     {
+#         type            epsilonWallFunction;
+#         value           uniform $epsilonInlet;
+#     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
+#     #includeEtc "caseDicts/setConstraintTypes"
 
-}
-        """)
-        w_footer(f)
-# ---------------------------------------------------------------------------- #
-def create_0_nut(casedir):
-    with open(casedir+'/0.orig/nut', 'w') as f:
-        w_header(f,'volScalarField','nut')
-        w(f, """ 
-dimensions      [0 2 -1 0 0 0 0];
+# }
+#         """)
+#         w_footer(f)
+# # ---------------------------------------------------------------------------- #
+# def create_0_nut(casedir):
+#     with open(casedir+'/0.orig/nut', 'w') as f:
+#         w_header(f,'volScalarField','nut')
+#         w(f, """ 
+# dimensions      [0 2 -1 0 0 0 0];
 
-internalField   uniform 0;
+# internalField   uniform 0;
 
-boundaryField
-{
-    inlet
-    {
-        type            calculated;
-        value           uniform 0;
-    }
+# boundaryField
+# {
+#     inlet
+#     {
+#         type            calculated;
+#         value           uniform 0;
+#     }
 
-    outlet
-    {
-        type            calculated;
-        value           uniform 0;
-    }
+#     outlet
+#     {
+#         type            calculated;
+#         value           uniform 0;
+#     }
 
-    wall
-    {
-        type            nutkWallFunction;
-        value           uniform 0;
-    }
+#     wall
+#     {
+#         type            nutkWallFunction;
+#         value           uniform 0;
+#     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
+#     #includeEtc "caseDicts/setConstraintTypes"
 
-}
-        """)
-        w_footer(f)
+# }
+#         """)
+#         w_footer(f)
 # ---------------------------------------------------------------------------- #
 def createDirsAndFiles(casedir, box_limits, stl_files):
     # ----------------------------- for blockMesh ---------------------------- #
@@ -933,11 +967,11 @@ def createDirsAndFiles(casedir, box_limits, stl_files):
     create_meshQualityDict(casedir)
     create_decomposeParDict(casedir)
     # ------------------------------ for solver ------------------------------ #
-    create_transProp(casedir)
-    create_turbProp(casedir)
-    create_0_U(casedir)
-    create_0_p(casedir)
-    create_0_k(casedir)
-    create_0_epsilon(casedir)
-    create_0_nut(casedir)
+    # create_transProp(casedir)
+    # create_turbProp(casedir)
+    # create_0_U(casedir)
+    # create_0_p(casedir)
+    # create_0_k(casedir)
+    # create_0_epsilon(casedir)
+    # create_0_nut(casedir)
     

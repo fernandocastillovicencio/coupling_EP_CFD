@@ -15,37 +15,67 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-epsilonInlet  0.03; // Cmu^0.75 * k^1.5 / L ; L =10
-
 dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform $epsilonInlet;
+internalField   uniform 0.01;
 
 boundaryField
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform $epsilonInlet;
-    }
-
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform $epsilonInlet;
-        value           uniform $epsilonInlet;
-    }
-
-    wall
+    floor
     {
         type            epsilonWallFunction;
-        value           uniform $epsilonInlet;
+        value           uniform 0.01;
+    }
+
+    ceiling
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+
+    fixedWalls
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
     }
     
-    #includeEtc "caseDicts/setConstraintTypes"
-
+    Flr001
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Roof001
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Wall001
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Wall002
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Wall003
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Wall004
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
+    Win001
+    {
+        type            epsilonWallFunction;
+        value           uniform 0.01;
+    }
 }
-        
+          
 
 
 // ************************************************************************* //

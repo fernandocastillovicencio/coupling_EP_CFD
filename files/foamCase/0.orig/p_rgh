@@ -10,72 +10,69 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      nut;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-dimensions      [0 2 -1 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 100000;
 
 boundaryField
 {
     floor
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
 
     ceiling
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
 
     fixedWalls
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
-    
+
     Flr001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Roof001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Wall001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Wall002
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Wall003
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Wall004
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
     Win001
     {
-        type            nutkWallFunction;
-        value           uniform 0;
+        type            fixedFluxPressure;
+        value           uniform 100000;
     }
-}          
+}
           
-
-
-// ************************************************************************* //

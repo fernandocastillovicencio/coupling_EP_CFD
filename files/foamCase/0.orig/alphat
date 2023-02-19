@@ -10,12 +10,12 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      nut;
+    object      alphat;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-dimensions      [0 2 -1 0 0 0 0];
+dimensions      [1 -1 -1 0 0 0 0];
 
 internalField   uniform 0;
 
@@ -23,59 +23,56 @@ boundaryField
 {
     floor
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
 
     ceiling
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
 
     fixedWalls
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     
     Flr001
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Roof001
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Wall001
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Wall002
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Wall003
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Wall004
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
     Win001
     {
-        type            nutkWallFunction;
+        type            compressible::alphatWallFunction;
         value           uniform 0;
     }
-}          
+}
           
-
-
-// ************************************************************************* //
