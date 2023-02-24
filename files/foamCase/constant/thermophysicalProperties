@@ -26,26 +26,24 @@ thermoType
     energy          sensibleEnthalpy;
 }
 
-pRef            100000;
-
 mixture
 {
     specie
     {
-        molWeight       28.9;
+        molWeight       28.96;
     }
     thermodynamics
     {
-        Cp              1000;
+        Cp              1004.4;
         Hf              0;
     }
     transport
     {
-        mu              1.8e-05;
-        Pr              0.7;
+        mu              1.831e-05;
+        Pr              0.705;
     }
 }
-          
+            
 
 
 // ************************************************************************* //

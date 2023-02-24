@@ -9,32 +9,25 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    object      radiationProperties;
+    class       volScalarField;
+    object      omega;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-radiation on;
+dimensions      [0 0 -1 0 0 0 0];
 
-radiationModel  P1;
+internalField   uniform 0.12;
 
-// Number of flow iterations per radiation iteration
-solverFreq 1;
-
-absorptionEmissionModel constantAbsorptionEmission;
-
-constantAbsorptionEmissionCoeffs
+boundaryField
 {
-    absorptivity    absorptivity    [0 -1 0 0 0 0 0] 0.5;
-    emissivity      emissivity      [0 -1 0 0 0 0 0] 0.5;
-    E               E               [1 -1 -3 0 0 0 0] 0;
+    ".*"
+    {
+        type            omegaWallFunction;
+        value           uniform 0.12;
+    }
 }
-
-scatterModel    none;
-
-sootModel       none;          
-          
+            
 
 
 // ************************************************************************* //

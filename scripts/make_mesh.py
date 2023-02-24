@@ -44,6 +44,7 @@ def mkMesh():
     mpirun --use-hwthread-cpus -np 26 snappyHexMesh -parallel -noFunctionObjects -overwrite > log.snappyHexMesh
     reconstructParMesh -constant
     mpirun --use-hwthread-cpus -np 26 checkMesh -parallel -latestTime > log.checkMesh
+    rm -rf processor*
     # paraFoam
     """
     single_snappy_commands="""
@@ -54,7 +55,7 @@ def mkMesh():
     # checkMesh
     # paraFoam
     """
-    os.system(multi_snappy_commands)
+    # os.system(multi_snappy_commands)
     # ------------------------------------------------------------------------ #
 
     

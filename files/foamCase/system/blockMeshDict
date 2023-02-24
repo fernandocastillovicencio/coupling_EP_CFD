@@ -14,74 +14,73 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-scale 1;
-
-xmin -22.86;
-xmax 38.1;
-ymin -22.86;
-ymax 38.1;
-zmin 0.0;
-zmax 27.432;
-
-xcells 33;
-ycells 33;
-zcells 10;
+ 
+scale   1;
 
 vertices
 (
-    ($xmin  $ymin  $zmin)
-    ($xmax  $ymin  $zmin)
-    ($xmax  $ymax  $zmin)
-    ($xmin  $ymax  $zmin)
-    ($xmin  $ymin  $zmax)
-    ($xmax  $ymin  $zmax)
-    ($xmax  $ymax  $zmax)
-    ($xmin  $ymax  $zmax)
-);
 
-blocks
-(
-    hex (0 1 2 3 4 5 6 7) ($xcells $ycells $zcells) simpleGrading (1 1 1)
+    ( -22.86  -22.86  -22.86 )
+    ( 38.1  -22.86  -22.86 )
+    ( 38.1  38.1  -22.86 )
+    ( -22.86  38.1  -22.86 )
+    ( -22.86  -22.86  27.432 )
+    ( 38.1  -22.86  27.432 )
+    ( 38.1  38.1  27.432 )
+    ( -22.86  38.1  27.432 )
+ 
 );
 
 edges
 (
 );
- 
+
+blocks
+(
+        
+hex (0 1 2 3 4 5 6 7) (83 83 25) simpleGrading (1 1 1)
+
+);
+
 boundary
 (
-    floor
+
+    inlet
     {
         type wall;
         faces
         (
-            ( 0 1 2 3 )
+            (4 7 3 0)
         );
     }
-    ceiling
+    
+    outlet
     {
         type wall;
         faces
         (
-            ( 4 5 6 7 )
+            (6 5 1 2)
         );
     }
-    fixedWalls
+    
+    walls
     {
         type wall;
         faces
         (
-            ( 0 4 7 3 )
-            ( 2 6 5 1 )
-            ( 1 5 4 0 )
-            ( 3 7 6 2 )
+            (0 1 5 4)
+            (2 3 7 6)
+            (4 5 6 7)
+            (3 2 1 0)
         );
     }
+
 );
-      
+
 mergePatchPairs
 (
 );
+          
 
 
 // ************************************************************************* //

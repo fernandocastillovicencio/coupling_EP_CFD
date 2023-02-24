@@ -17,62 +17,17 @@ FoamFile
  
 dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 100000;
+internalField   uniform 1e5;
 
 boundaryField
-{
-    floor
+{    
+    ".*"
     {
         type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-
-    ceiling
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-
-    fixedWalls
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-
-    Flr001
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Roof001
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Wall001
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Wall002
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Wall003
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Wall004
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
-    }
-    Win001
-    {
-        type            fixedFluxPressure;
-        value           uniform 100000;
+        value           uniform 1e5;
     }
 }
-          
+            
+
+
+// ************************************************************************* //

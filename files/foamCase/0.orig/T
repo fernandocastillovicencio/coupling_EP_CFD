@@ -17,65 +17,27 @@ FoamFile
  
 dimensions      [0 0 0 1 0 0 0];
 
-internalField   uniform 300;
+internalField   uniform 273;
 
 boundaryField
 {
-    floor
+    inlet
     {
-        type            fixedValue;
-        value           uniform 300.0;
+        type        fixedValue;
+        value       uniform 270;
     }
-
-    ceiling
+    outlet
     {
-        type            fixedValue;
-        value           uniform 300.0;
+        type        fixedValue;
+        value       uniform 276;
     }
-
-    fixedWalls
+    ".*"
     {
-        type            zeroGradient;
+        type        fixedValue;
+        value       uniform 273;
     }
-
-    Flr001
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Roof001
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Wall001
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Wall002
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Wall003
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Wall004
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    Win001
-    {
-        type            fixedValue;
-        value           uniform 500.0;
-    }
-    
 }
-          
+            
 
 
 // ************************************************************************* //

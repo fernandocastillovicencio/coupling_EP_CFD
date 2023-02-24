@@ -7,8 +7,7 @@ def mkSolver():
     casedir = rel('../files/foamCase')
     create_solver_files(casedir)
     
-    
-    
+     
     # --------------------------- Prepare directory -------------------------- #
     prepare_commands="""
     # cd files/foamCase
@@ -22,7 +21,9 @@ def mkSolver():
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
     cp -r 0.orig 0
-    buoyantSimpleFoam > log.foamRun
+    rm -rf processor*    
+    potentialFoam
+    buoyantSimpleFoam
     paraFoam
     """
     # ------------------------------------------------------------------------ #
@@ -31,8 +32,9 @@ def mkSolver():
     cd files/foamCase
     cp -r 0.orig 0
     rm -rf processor*
+    potentialFoam
     decomposePar -force
-    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel > log.foamRun
+    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel
     reconstructPar
     paraFoam
     """
@@ -46,7 +48,7 @@ def mkSolver():
     cd files/foamCase
     foamCleanTutorials
     foamCleanPolyMesh
-    rm -rf constant/extendedFeatureEdgeMesh
+    rm -rf constant/extendedFeatureEdgeMesh 1* 2* 3* 4* 5* 6* 7* 8* 9* processor* 0
     """
     os.system(cleanCmd)
     

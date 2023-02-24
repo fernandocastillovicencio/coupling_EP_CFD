@@ -17,65 +17,18 @@ FoamFile
  
 dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform 0.01;
+internalField   uniform 4e-06;
 
 boundaryField
 {
-    floor
+    ".*"
     {
         type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-
-    ceiling
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-
-    fixedWalls
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
+        value           uniform 4e-06;
     }
     
-    Flr001
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Roof001
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Wall001
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Wall002
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Wall003
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Wall004
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
-    Win001
-    {
-        type            epsilonWallFunction;
-        value           uniform 0.01;
-    }
 }
-          
+            
 
 
 // ************************************************************************* //

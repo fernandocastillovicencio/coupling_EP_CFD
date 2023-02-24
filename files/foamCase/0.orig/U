@@ -21,51 +21,13 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    floor
+    ".*"
     {
         type            noSlip;
     }
-
-    ceiling
-    {
-        type            noSlip;
-    }
-
-    fixedWalls
-    {
-        type            noSlip;
-    }
-
-    Flr001
-    {
-        type            noSlip;
-    }
-    Roof001
-    {
-        type            noSlip;
-    }
-    Wall001
-    {
-        type            noSlip;
-    }
-    Wall002
-    {
-        type            noSlip;
-    }
-    Wall003
-    {
-        type            noSlip;
-    }
-    Wall004
-    {
-        type            noSlip;
-    }
-    Win001
-    {
-        type            noSlip;
-    }
+    
 }
-          
+            
 
 
 // ************************************************************************* //

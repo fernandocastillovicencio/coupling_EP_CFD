@@ -10,18 +10,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      boundaryRadiationProperties;
+    object      fvOptions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-".*"
+limitT
 {
-    type            lookup;
-    emissivity      1.0;
-    absorptivity    1.0;
-}          
-          
+    type       limitTemperature;
+    min        200;
+    max        400;
+    selectionMode all;
+}
+            
 
 
 // ************************************************************************* //

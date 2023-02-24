@@ -17,65 +17,17 @@ FoamFile
  
 dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 100000;
+internalField   uniform 1e5;
 
 boundaryField
-{
-    floor
+{   
+    ".*"
     {
         type            calculated;
         value           $internalField;
     }
-
-    ceiling
-    {
-        type            calculated;
-        value           $internalField;
-    }
-
-    fixedWalls
-    {
-        type            calculated;
-        value           $internalField;
-    }
-
-    Flr001
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Roof001
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Wall001
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Wall002
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Wall003
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Wall004
-    {
-        type            calculated;
-        value           $internalField;
-    }
-    Win001
-    {
-        type            calculated;
-        value           $internalField;
-    }
-}          
-          
+}
+            
 
 
 // ************************************************************************* //
