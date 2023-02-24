@@ -9,25 +9,15 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      alphat;
+    class       dictionary;
+    object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-dimensions      [1 -1 -1 0 0 0 0];
+transportModel  Newtonian;
 
-internalField   uniform 0;
-
-boundaryField
-{
-    ".*"
-    {
-        type            compressible::alphatWallFunction;
-        Prt             0.85;
-        value           uniform 0;
-    }    
-}
+nu              1e-05;
             
 
 

@@ -17,17 +17,30 @@ FoamFile
  
 dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform 4e-06;
+internalField   uniform 14.855;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform 14.855;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            epsilonWallFunction;
-        value           uniform 4e-06;
+        value           uniform 14.855;
     }
+
     
 }
+
             
 
 

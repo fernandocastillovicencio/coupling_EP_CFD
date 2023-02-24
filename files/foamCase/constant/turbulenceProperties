@@ -15,15 +15,17 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-simulationType          RAS;
+simulationType      RAS;
 
 RAS
 {
-    RASModel            kOmegaSST;
+    // Tested with kEpsilon, realizableKE, kOmega, kOmegaSST,
+    // ShihQuadraticKE, LienCubicKE.
+    RASModel        kEpsilon;
 
-    turbulence          on;
+    turbulence      on;
 
-    printCoeffs         on;
+    printCoeffs     on;
 }
             
 

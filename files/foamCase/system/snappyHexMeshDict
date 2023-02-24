@@ -115,7 +115,7 @@ castellatedMeshControls
     refinementRegions
     {
     }
-    locationInMesh (26.67 26.67 16.002); 
+    locationInMesh (-0.01 -0.01 0.01); 
 }
 
 snapControls

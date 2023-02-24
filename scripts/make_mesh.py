@@ -55,7 +55,7 @@ def mkMesh():
     # checkMesh
     # paraFoam
     """
-    # os.system(multi_snappy_commands)
+    os.system(multi_snappy_commands)
     # ------------------------------------------------------------------------ #
 
     

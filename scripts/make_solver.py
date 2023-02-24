@@ -21,9 +21,9 @@ def mkSolver():
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
     cp -r 0.orig 0
-    rm -rf processor*    
+    # rm -rf processor*    
     potentialFoam
-    buoyantSimpleFoam
+    simpleFoam
     paraFoam
     """
     # ------------------------------------------------------------------------ #
@@ -34,9 +34,9 @@ def mkSolver():
     rm -rf processor*
     potentialFoam
     decomposePar -force
-    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel
+    mpirun --use-hwthread-cpus -np 26 simpleFoam -parallel > log.foamRun
     reconstructPar
-    paraFoam
+    touch foamCase.foam
     """
     # ------------------------------------------------------------------------ #
     os.system(multi_solver_commands)
@@ -46,8 +46,8 @@ def mkSolver():
     cleanCmd="""
     . /usr/lib/openfoam/openfoam2206/etc/bashrc
     cd files/foamCase
-    foamCleanTutorials
-    foamCleanPolyMesh
+    # foamCleanTutorials
+    # foamCleanPolyMesh
     rm -rf constant/extendedFeatureEdgeMesh 1* 2* 3* 4* 5* 6* 7* 8* 9* processor* 0
     """
     os.system(cleanCmd)

@@ -17,17 +17,32 @@ FoamFile
  
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 3.75e-04;
+internalField   uniform 0.375;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform 0.375;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            kqRWallFunction;
-        value           uniform 3.75e-04;
+        value           uniform 0.375;
     }
-    
+
 }
+
+
+// ************************************************************************* //
+
             
 
 

@@ -10,43 +10,29 @@ def folder_0(casedir):
             w(f,""" 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform (0.5 0 0);
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform (3 0 0);
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+    
+    ceiling
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            noSlip;
-    }
-    
-}
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_T(casedir):
-        with open(casedir+'/0.orig/T', 'w') as f:
-            w_header(f,'volScalarField','T')
-            w(f,""" 
-dimensions      [0 0 0 1 0 0 0];
-
-internalField   uniform 273;
-
-boundaryField
-{
-    inlet
-    {
-        type        fixedValue;
-        value       uniform 270;
-    }
-    outlet
-    {
-        type        fixedValue;
-        value       uniform 276;
-    }
-    ".*"
-    {
-        type        fixedValue;
-        value       uniform 273;
     }
 }
             """)
@@ -56,35 +42,90 @@ boundaryField
         with open(casedir+'/0.orig/p', 'w') as f:
             w_header(f,'volScalarField','p')
             w(f,""" 
-dimensions      [1 -1 -2 0 0 0 0];
+dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 1e5;
+internalField   uniform 0;
 
 boundaryField
-{   
+{
+        
+    east
+    {
+        type            zeroGradient;
+    }
+
+    west
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+    
     ".*"
     {
-        type            calculated;
-        value           $internalField;
+        type            zeroGradient;
     }
+
 }
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_p_rgh(casedir):
-        with open(casedir+'/0.orig/p_rgh', 'w') as f:
-            w_header(f,'volScalarField','p_rgh')
+    def create_nut(casedir):
+        with open(casedir+'/0.orig/nut', 'w') as f:
+            w_header(f,'volScalarField','nut')
             w(f,""" 
-dimensions      [1 -1 -2 0 0 0 0];
+dimensions      [0 2 -1 0 0 0 0];
 
-internalField   uniform 1e5;
+internalField   uniform 1e-05;
 
 boundaryField
-{    
+{
+    east
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    west
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
     ".*"
     {
-        type            fixedFluxPressure;
-        value           uniform 1e5;
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+}
+
+            """)
+            w_footer(f)
+    # ------------------------------------------------------------------------ #
+    def create_nuTilda(casedir):
+        with open(casedir+'/0.orig/nuTilda', 'w') as f:
+            w_header(f,'volScalarField','nuTilda')
+            w(f,""" 
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 4e-05;
+
+boundaryField
+{
+    east
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
+    ".*"
+    {
+        type            zeroGradient;
     }
 }
             """)
@@ -96,17 +137,32 @@ boundaryField
             w(f,""" 
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 3.75e-04;
+internalField   uniform 0.375;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform 0.375;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            kqRWallFunction;
-        value           uniform 3.75e-04;
+        value           uniform 0.375;
     }
-    
+
 }
+
+
+// ************************************************************************* //
+
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
@@ -116,17 +172,30 @@ boundaryField
             w(f,""" 
 dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform 4e-06;
+internalField   uniform 14.855;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform 14.855;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            epsilonWallFunction;
-        value           uniform 4e-06;
+        value           uniform 14.855;
     }
+
     
 }
+
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
@@ -136,137 +205,74 @@ boundaryField
             w(f,""" 
 dimensions      [0 0 -1 0 0 0 0];
 
-internalField   uniform 0.12;
+internalField   uniform 440.15;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            omegaWallFunction;
-        value           uniform 0.12;
+        value           $internalField;
     }
 }
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_nut(casedir):
-        with open(casedir+'/0.orig/nut', 'w') as f:
-            w_header(f,'volScalarField','nut')
-            w(f,""" 
-dimensions      [0 2 -1 0 0 0 0];
 
-internalField   uniform 0;
-
-boundaryField
-{
-    ".*"
-    {
-        type            nutkWallFunction;
-        value           uniform 0;
-    }
-    
-}
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_alphat(casedir):
-        with open(casedir+'/0.orig/alphat', 'w') as f:
-            w_header(f,'volScalarField','alphat')
-            w(f,""" 
-dimensions      [1 -1 -1 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
-{
-    ".*"
-    {
-        type            compressible::alphatWallFunction;
-        Prt             0.85;
-        value           uniform 0;
-    }    
-}
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
     # --------------------------------- tasks -------------------------------- #
     create_U(casedir)
-    create_T(casedir)
     create_p(casedir)
-    create_p_rgh(casedir)
     # ------------------------------ turbulence ------------------------------ #
+    create_nut(casedir)
+    create_nuTilda(casedir)
     create_k(casedir)
     create_epsilon(casedir)
     create_omega(casedir)
-    create_nut(casedir)
-    create_alphat(casedir)
-# ---------------------------------------------------------------------------- #
+    # ---------------------------------------------------------------------------- #
 def folder_constant(casedir):
     # --------------------------------- files -------------------------------- #
     def create_turbulenceProperties(casedir):
         with open(casedir+'/constant/turbulenceProperties', 'w') as f:
             w_header(f,'dictionary','turbulenceProperties')
             w(f,""" 
-simulationType          RAS;
+simulationType      RAS;
 
 RAS
 {
-    RASModel            kOmegaSST;
+    // Tested with kEpsilon, realizableKE, kOmega, kOmegaSST,
+    // ShihQuadraticKE, LienCubicKE.
+    RASModel        kEpsilon;
 
-    turbulence          on;
+    turbulence      on;
 
-    printCoeffs         on;
+    printCoeffs     on;
 }
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_thermophysicalProperties(casedir):
-        with open(casedir+'/constant/thermophysicalProperties', 'w') as f:
-            w_header(f,'dictionary','thermophysicalProperties')
+    def create_transportProperties(casedir):
+        with open(casedir+'/constant/transportProperties', 'w') as f:
+            w_header(f,'dictionary','transportProperties')
             w(f,""" 
-thermoType
-{
-    type            heRhoThermo;
-    mixture         pureMixture;
-    transport       const;
-    thermo          hConst;
-    equationOfState perfectGas;
-    specie          specie;
-    energy          sensibleEnthalpy;
-}
+transportModel  Newtonian;
 
-mixture
-{
-    specie
-    {
-        molWeight       28.96;
-    }
-    thermodynamics
-    {
-        Cp              1004.4;
-        Hf              0;
-    }
-    transport
-    {
-        mu              1.831e-05;
-        Pr              0.705;
-    }
-}
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_g(casedir):
-        with open(casedir+'/constant/g', 'w') as f:
-            w_header(f,'dictionary','g')
-            w(f,""" 
-dimensions      [0 1 -2 0 0 0 0];
-value           (0 0 -9.81);
+nu              1e-05;
             """)
             w_footer(f)
     # --------------------------------- tasks -------------------------------- #
     create_turbulenceProperties(casedir)
-    create_thermophysicalProperties(casedir)
-    create_g(casedir)
+    create_transportProperties(casedir)
 # ---------------------------------------------------------------------------- #
 def folder_system(casedir):
     # --------------------------------- files -------------------------------- #
@@ -276,7 +282,7 @@ def folder_system(casedir):
             w(f,""" 
 ddtSchemes
 {
-    default steadyState;
+    default         steadyState;
 }
 
 gradSchemes
@@ -288,23 +294,20 @@ divSchemes
 {
     default         none;
 
-    div(phi,U)      bounded Gauss limitedLinear 0.2;
+    div(phi,U)      bounded Gauss linearUpwind grad(U);
 
-    energy          bounded Gauss limitedLinear 0.2;
-    div(phi,K)      $energy;
-    div(phi,h)      $energy;
-
-    turbulence      bounded Gauss limitedLinear 0.2;
+    turbulence      bounded Gauss limitedLinear 1;
     div(phi,k)      $turbulence;
     div(phi,epsilon) $turbulence;
-    div(phi,omega) $turbulence;
+    div(phi,omega)  $turbulence;
 
-    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+    div(nonlinearStress) Gauss linear;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
 {
-    default         Gauss linear orthogonal;
+    default         Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -314,13 +317,15 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         orthogonal;
+    default         corrected;
 }
 
 wallDist
 {
     method          meshWave;
 }
+
+
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
@@ -330,85 +335,43 @@ wallDist
             w(f,""" 
 solvers
 {
-    Phi
-    {
-        solver          GAMG;
-        smoother        DIC;
-        tolerance       1e-06;
-        relTol          0.01;
-    }
-
     p
     {
-        $Phi;
-    }
-    p_rgh
-    {
-        solver           GAMG;
-        tolerance        1e-7;
-        relTol           0.01;
-        smoother         DICGaussSeidel;
+        solver          GAMG;
+        tolerance       1e-06;
+        relTol          0.1;
+        smoother        GaussSeidel;
     }
 
-    "(U|h|k|epsilon|omega)"
+    "(U|k|epsilon|omega|f|v2)"
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-8;
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-05;
         relTol          0.1;
     }
 }
 
 SIMPLE
 {
-    momentumPredictor no;
     nNonOrthogonalCorrectors 0;
-    pRefCell        0;
-    pRefValue       0;
+    consistent      yes;
 
     residualControl
     {
-        p_rgh           1e-4;
-        U               1e-4;
-        h               1e-4;
-
-        // possibly check turbulence fields
-        "(k|epsilon|omega)" 1e-4;
+        p               1e-2;
+        U               1e-3;
+        "(k|epsilon|omega|f|v2)" 1e-3;
     }
 }
 
 relaxationFactors
 {
-    fields
-    {
-        rho             1.0;
-        p_rgh           0.7;
-    }
     equations
     {
-        U               0.3;
-        h               0.3;
-        "(k|epsilon|omega)" 0.7;
+        U               0.9; // 0.9 is more stable but 0.95 more convergent
+        ".*"            0.9; // 0.9 is more stable but 0.95 more convergent
     }
-}
-potentialFlow
-{
-    nNonOrthogonalCorrectors 5;
-}
-
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_fvOptions(casedir):
-        with open(casedir+'/system/fvOptions', 'w') as f:
-            w_header(f,'dictionary','fvOptions')
-            w(f,""" 
-limitT
-{
-    type       limitTemperature;
-    min        200;
-    max        400;
-    selectionMode all;
 }
             """)
             w_footer(f)
@@ -417,7 +380,7 @@ limitT
         with open(casedir+'/system/controlDict', 'w') as f:
             w_header(f,'dictionary','controlDict')
             w(f,""" 
-application     buoyantSimpleFoam;
+application     simpleFoam;
 
 startFrom       startTime;
 
@@ -425,13 +388,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         1000;
+endTime         1500;
 
-deltaT          10;
+deltaT          5;
 
 writeControl    timeStep;
 
-writeInterval   10;
+writeInterval   20;
 
 purgeWrite      0;
 
@@ -461,7 +424,6 @@ method          scotch;
     # --------------------------------- tasks -------------------------------- #
     create_fvSchemes(casedir)
     create_fvSolution(casedir)
-    create_fvOptions(casedir)
     create_controlDict(casedir)
     create_decomposeParDict(casedir)
 # ---------------------------------------------------------------------------- #

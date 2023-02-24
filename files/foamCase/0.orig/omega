@@ -17,16 +17,28 @@ FoamFile
  
 dimensions      [0 0 -1 0 0 0 0];
 
-internalField   uniform 0.12;
+internalField   uniform 440.15;
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            omegaWallFunction;
-        value           uniform 0.12;
+        value           $internalField;
     }
 }
+
             
 
 

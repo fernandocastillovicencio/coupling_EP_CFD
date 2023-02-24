@@ -17,15 +17,30 @@ FoamFile
  
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform (0.5 0 0);
 
 boundaryField
 {
+    east
+    {
+        type            fixedValue;
+        value           uniform (3 0 0);
+    }
+
+    west
+    {
+        type            zeroGradient;
+    }
+    
+    ceiling
+    {
+        type            zeroGradient;
+    }
+
     ".*"
     {
         type            noSlip;
     }
-    
 }
             
 

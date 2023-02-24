@@ -55,7 +55,7 @@ def create_blockMeshDict(casedir,box_limits):
         xmax = str(box_limits[1]+k*H)
         ymin = str(box_limits[2]-k*H)
         ymax = str(box_limits[3]+k*H)
-        zmin = str(box_limits[4]-k*H)
+        zmin = str(0)
         zmax = str(box_limits[5]+k*H)
         # -------------------------------------------------------------------- #
         w_header(f,'dictionary','blockMeshDict')
@@ -84,7 +84,7 @@ blocks
 (
         """ ) 
         # ------------------------------ grading ----------------------------- #
-        mesh_division_size=25
+        mesh_division_size=10
         ds = (box_limits[5]-box_limits[4])/mesh_division_size
         xcells = str(round( (box_limits[1]-box_limits[0])/ds ))
         ycells = str(round( (box_limits[3]-box_limits[2])/ds ))
@@ -97,7 +97,7 @@ blocks
 boundary
 (
 
-    inlet
+    east
     {
         type wall;
         faces
@@ -106,7 +106,7 @@ boundary
         );
     }
     
-    outlet
+    west
     {
         type wall;
         faces
@@ -115,18 +115,41 @@ boundary
         );
     }
     
-    walls
+    north
+    {
+        type wall;
+        faces
+        (
+            (2 3 7 6)
+        );
+    }
+    
+    south
     {
         type wall;
         faces
         (
             (0 1 5 4)
-            (2 3 7 6)
-            (4 5 6 7)
+        );
+    }
+    
+    floor
+    {
+        type wall;
+        faces
+        (
             (3 2 1 0)
         );
     }
-
+    
+    ceiling
+    {
+        type wall;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
 );
 
 mergePatchPairs
@@ -339,13 +362,13 @@ def stl_refinement_layers(f,file):
 def create_snappyHexMeshDict(casedir,box_limits,stl_files):
     with open(casedir+'/system/snappyHexMeshDict', 'w') as f:
         # ----------------------------- variables ---------------------------- #
-        factor = 5
+        k = 5
         H = box_limits[5]-box_limits[4]
         # -------------------------------------------------------------------- #
-        n = 1 ; r=1/4
-        box_scales = [1]*n
-        for i in range(n):
-            box_scales[i]*=r**(i)
+        # n = 1 ; r=1/4
+        # box_scales = [1]*n
+        # for i in range(n):
+        #     box_scales[i]*=r**(i)
         # -------------------------------------------------------------------- #
         w_header(f,'dictionary','snappyHexMeshDict')
         # ----------------------- initial configuration ---------------------- #
@@ -359,7 +382,7 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         for file in stl_files:
             stl_geometry(f,file)
         # --------------------------- insert ground -------------------------- #
-        r = factor*max(box_limits[1]-box_limits[0],box_limits[3]-box_limits[2],\
+        r = k*max(box_limits[1]-box_limits[0],box_limits[3]-box_limits[2],\
             box_limits[5]-box_limits[4])
         ground_region(f,r)
         w(f, '};')
@@ -392,11 +415,15 @@ def create_snappyHexMeshDict(casedir,box_limits,stl_files):
         w(f, '    {')
         # ground_refinement(f)
         w(f, '    }')
-        locx = box_limits[1]+factor/2*H
-        locy = box_limits[3]+factor/2*H
-        locz = box_limits[5]+factor/2*H
+        # locx = box_limits[1]+factor/2*H
+        # locy = box_limits[3]+factor/2*H
+        # locz = box_limits[5]+factor/2*H
+        locx = box_limits[1]+k*H/2
+        locy = box_limits[3]+k*H/2
+        locz = box_limits[5]+k*H/2
         w(f, '    locationInMesh ('+\
-            str(locx)+' '+str(locy)+' '+str(locz)+'); ')
+            # str(locx)+' '+str(locy)+' '+str(locz)+'); ')
+            str(-0.01)+' '+str(-0.01)+' '+str(0.01)+'); ')
         w(f, '}')
         w(f, '')
         # -------------------------------------------------------------------- #

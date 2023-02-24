@@ -15,7 +15,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-application     buoyantSimpleFoam;
+application     simpleFoam;
 
 startFrom       startTime;
 
@@ -23,13 +23,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         1000;
+endTime         1500;
 
-deltaT          10;
+deltaT          5;
 
 writeControl    timeStep;
 
-writeInterval   10;
+writeInterval   20;
 
 purgeWrite      0;
 
