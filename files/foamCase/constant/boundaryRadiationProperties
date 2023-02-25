@@ -10,58 +10,20 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      controlDict;
+    object      boundaryRadiationProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-application     buoyantSimpleFoam;
-
-startFrom       startTime;
-
-startTime       0;
-
-stopAt          endTime;
-
-endTime         400;
-
-deltaT          1;
-
-writeControl    timeStep;
-
-writeInterval   50;
-
-purgeWrite      4;
-
-writeFormat     ascii;
-
-writePrecision  6;
-
-writeCompression off;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-functions
+".*"
 {
-    htc
-    {
-        type            heatTransferCoeff;
-        libs            (fieldFunctionObjects);
-        field           T;
-        writeControl    writeTime;
-        writeInterval   1;
-        htcModel        fixedReferenceTemperature;
-        patches         (Wall001 Wall002 Wall003 Wall004 Roof001 Win001);
-        TRef            273;
-    }
-    
+    type            lookup;
+    emissivity      1.0;
+    absorptivity    1.0;
+    transmissivity  0.0;
 }
 
-            
+          
 
 
 // ************************************************************************* //

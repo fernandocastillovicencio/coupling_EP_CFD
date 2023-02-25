@@ -11,7 +11,7 @@ def mkSolver():
     # --------------------------- Prepare directory -------------------------- #
     prepare_commands="""
     cd files/foamCase
-    rm -rf [1-9]* 0.[0-9]* processor* 0
+    rm -rf [1-9]* 0.[0-9]* processor* 0 h* postProcessing
     rm -rf 0 > /dev/null 2>&1
     # """
     os.system(prepare_commands)
@@ -23,7 +23,7 @@ def mkSolver():
     cp -r 0.orig 0
     # rm -rf processor*    
     potentialFoam
-    buoyantSimpleFoam
+    buoyantSimpleFoam > log.foamRun
     paraFoam
     """
     # ------------------------------------------------------------------------ #
@@ -34,14 +34,30 @@ def mkSolver():
     rm -rf processor*
     potentialFoam
     decomposePar -force
-    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel
-    reconstructPar
+    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel > log.foamRun
+    reconstructPar > log.reconstructPar
     touch foamCase.foam
     rm -rf processor*
-    paraFoam
+    # paraFoam
     """
     # ------------------------------------------------------------------------ #
     os.system(multi_solver_commands)
+    # ------------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------ #
+    # ---------------------------- Post Processing --------------------------- #
+    postprocessing_commands="""
+    . /usr/lib/openfoam/openfoam2206/etc/bashrc
+    cd files/foamCase
+    postProcess -func 'patchAverage(name=Wall001,heatTransferCoeff(T))' -latestTime
+    postProcess -func 'patchAverage(name=Wall002,heatTransferCoeff(T))' -latestTime
+    postProcess -func 'patchAverage(name=Wall003,heatTransferCoeff(T))' -latestTime
+    postProcess -func 'patchAverage(name=Wall004,heatTransferCoeff(T))' -latestTime
+    postProcess -func 'patchAverage(name=Roof001,heatTransferCoeff(T))' -latestTime
+    postProcess -func 'patchAverage(name=Win001,heatTransferCoeff(T))' -latestTime
+    paraFoam
+    """
+    # ------------------------------------------------------------------------ #
+    os.system(postprocessing_commands)
     # ------------------------------------------------------------------------ #
     # ------------------------------------------------------------------------ #
     # ---------------------------- Clean directory --------------------------- #

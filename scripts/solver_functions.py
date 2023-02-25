@@ -4,7 +4,7 @@ from scripts.mesh_functions import w, w_header, w_footer
 # ---------------------------------------------------------------------------- #
 def folder_0(casedir):
     # --------------------------------- files -------------------------------- #
-    def create_U(casedir):
+    def field_U(casedir):
         with open(casedir+'/0.orig/U', 'w') as f:
             w_header(f,'volVectorField','U')
             w(f,""" 
@@ -42,7 +42,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_p(casedir):
+    def field_p(casedir):
         with open(casedir+'/0.orig/p', 'w') as f:
             w_header(f,'volScalarField','p')
             w(f,""" 
@@ -73,7 +73,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_T(casedir):
+    def field_T(casedir):
         with open(casedir+'/0.orig/T', 'w') as f:
             w_header(f,'volScalarField','T')
             w(f,""" 
@@ -104,7 +104,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_p_rgh(casedir):
+    def field_p_rgh(casedir):
         with open(casedir+'/0.orig/p_rgh', 'w') as f:
             w_header(f,'volScalarField','p_rgh')
             w(f,""" 
@@ -138,7 +138,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------ turbulence ------------------------------ #
-    def create_nut(casedir):
+    def turb_nut(casedir):
         with open(casedir+'/0.orig/nut', 'w') as f:
             w_header(f,'volScalarField','nut')
             w(f,""" 
@@ -171,7 +171,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_nuTilda(casedir):
+    def turb_nuTilda(casedir):
         with open(casedir+'/0.orig/nuTilda', 'w') as f:
             w_header(f,'volScalarField','nuTilda')
             w(f,""" 
@@ -200,7 +200,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_alphat(casedir):
+    def turb_alphat(casedir):
         with open(casedir+'/0.orig/alphat', 'w') as f:
             w_header(f,'volScalarField','alphat')
             w(f,""" 
@@ -232,7 +232,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_k(casedir):
+    def turb_k(casedir):
         with open(casedir+'/0.orig/k', 'w') as f:
             w_header(f,'volScalarField','k')
             w(f,""" 
@@ -267,7 +267,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_epsilon(casedir):
+    def turb_epsilon(casedir):
         with open(casedir+'/0.orig/epsilon', 'w') as f:
             w_header(f,'volScalarField','epsilon')
             w(f,""" 
@@ -300,7 +300,7 @@ boundaryField
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_omega(casedir):
+    def turb_omega(casedir):
         with open(casedir+'/0.orig/omega', 'w') as f:
             w_header(f,'volScalarField','omega')
             w(f,""" 
@@ -330,23 +330,63 @@ boundaryField
 
             """)
             w_footer(f)
+    # ------------------------------- radiation ------------------------------ #
+    def rad_G(casedir):
+        with open(casedir+'/0.orig/G', 'w') as f:
+            w_header(f,'volScalarField','G')
+            w(f,""" 
+dimensions      [1 0 -3 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    east
+    {
+        type            MarshakRadiation;
+        value           uniform 0;
+    }
+
+    west
+    {
+        type            MarshakRadiation;
+        value           uniform 0;
+    }
+
+    ceiling
+    {
+        type            MarshakRadiation;
+        value           uniform 0;
+    }
+    
+    ".*"
+    {
+        type            MarshakRadiation;
+        value           uniform 0;
+    }
+
+}
+            """)
+            w_footer(f)
     # ------------------------------------------------------------------------ #
     # --------------------------------- tasks -------------------------------- #
-    create_U(casedir)
-    create_p(casedir)
-    create_T(casedir)
-    create_p_rgh(casedir)
+    field_U(casedir)
+    field_p(casedir)
+    field_T(casedir)
+    field_p_rgh(casedir)
     # ------------------------------ turbulence ------------------------------ #
-    create_nut(casedir)
-    create_nuTilda(casedir)
-    create_alphat(casedir)
-    create_k(casedir)
-    create_epsilon(casedir)
-    create_omega(casedir)
+    turb_nut(casedir)
+    turb_nuTilda(casedir)
+    turb_alphat(casedir)
+    turb_k(casedir)
+    turb_epsilon(casedir)
+    turb_omega(casedir)
+    # ------------------------------- radiation ------------------------------ #
+    rad_G(casedir)
     # ---------------------------------------------------------------------------- #
 def folder_constant(casedir):
     # --------------------------------- files -------------------------------- #
-    def create_turbulenceProperties(casedir):
+    def turbulenceProperties(casedir):
         with open(casedir+'/constant/turbulenceProperties', 'w') as f:
             w_header(f,'dictionary','turbulenceProperties')
             w(f,""" 
@@ -365,7 +405,7 @@ RAS
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_thermophysicalProperties(casedir):
+    def thermophysicalProperties(casedir):
         with open(casedir+'/constant/thermophysicalProperties', 'w') as f:
             w_header(f,'dictionary','thermophysicalProperties')
             w(f,""" 
@@ -379,6 +419,8 @@ thermoType
     specie          specie;
     energy          sensibleEnthalpy;
 }
+
+pRef            1e5;
 
 mixture
 {
@@ -406,7 +448,7 @@ mixture
           """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    def create_g(casedir):
+    def accel_g(casedir):
         with open(casedir+'/constant/g', 'w') as f:
             w_header(f,'dictionary','g')
             w(f,""" 
@@ -415,12 +457,108 @@ value           (0 0 -9.81);
           """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
-    create_turbulenceProperties(casedir)
-    create_thermophysicalProperties(casedir)
-    create_g(casedir)
+    def rad_boundaryRadiationProperties(casedir):
+        with open(casedir+'/constant/boundaryRadiationProperties', 'w') as f:
+            w_header(f,'dictionary','boundaryRadiationProperties')
+            w(f,""" 
+".*"
+{
+    type            lookup;
+    emissivity      1.0;
+    absorptivity    1.0;
+    transmissivity  0.0;
+}
+
+          """)
+            w_footer(f)
+    # ------------------------------------------------------------------------ #
+    def rad_radiationProperties(casedir):
+        with open(casedir+'/constant/radiationProperties', 'w') as f:
+            w_header(f,'dictionary','radiationProperties')
+            w(f,""" 
+radiation on;
+
+radiationModel  P1;
+
+// Number of flow iterations per radiation iteration
+solverFreq 1;
+
+absorptionEmissionModel constantAbsorptionEmission;
+
+constantAbsorptionEmissionCoeffs
+{
+    absorptivity    absorptivity    [0 -1 0 0 0 0 0] 0.5;
+    emissivity      emissivity      [0 -1 0 0 0 0 0] 0.5;
+    E               E               [1 -1 -3 0 0 0 0] 0;
+}
+
+scatterModel    none;
+
+sootModel       none;
+          """)
+            w_footer(f)
+    # ------------------------------------------------------------------------ #
+    turbulenceProperties(casedir)
+    thermophysicalProperties(casedir)
+    accel_g(casedir)
+    rad_boundaryRadiationProperties(casedir)
+    rad_radiationProperties(casedir)
 # ---------------------------------------------------------------------------- #
 def folder_system(casedir):
     # --------------------------------- files -------------------------------- #
+    def create_controlDict(casedir):
+        with open(casedir+'/system/controlDict', 'w') as f:
+            w_header(f,'dictionary','controlDict')
+            w(f,""" 
+application     buoyantSimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         400;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      4;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    htc
+    {
+        type            heatTransferCoeff;
+        libs            (fieldFunctionObjects);
+        field           T;
+        writeControl    writeTime;
+        writeInterval   1;
+        htcModel        fixedReferenceTemperature;
+        patches         (Wall001 Wall002 Wall003 Wall004 Roof001 Win001);
+        TRef            273;
+    }
+    
+}
+
+            """)
+            w_footer(f)
+    # ------------------------------------------------------------------------ #
     def create_fvSchemes(casedir):
         with open(casedir+'/system/fvSchemes', 'w') as f:
             w_header(f,'dictionary','fvSchemes')
@@ -491,6 +629,13 @@ solvers
         tolerance       1e-7;
         relTol          0.1;
     }
+    
+    G
+    {
+        $p_rgh;
+        tolerance       1e-05;
+        relTol          0.1;
+    }
 
     age
     {
@@ -509,6 +654,7 @@ SIMPLE
         p_rgh           1e-6;
         U               1e-6;
         h               1e-6;
+        G               1e-6;
         "(k|epsilon)"   1e-6;
     }
 }
@@ -525,61 +671,10 @@ relaxationFactors
         U               0.3;
         h               0.3;
         "(k|epsilon|R)" 0.7;
+        G               0.7;
         age             1;
     }
 }
-            """)
-            w_footer(f)
-    # ------------------------------------------------------------------------ #
-    def create_controlDict(casedir):
-        with open(casedir+'/system/controlDict', 'w') as f:
-            w_header(f,'dictionary','controlDict')
-            w(f,""" 
-application     buoyantSimpleFoam;
-
-startFrom       startTime;
-
-startTime       0;
-
-stopAt          endTime;
-
-endTime         60;
-
-deltaT          0.1;
-
-writeControl    timeStep;
-
-writeInterval   50;
-
-purgeWrite      10;
-
-writeFormat     ascii;
-
-writePrecision  6;
-
-writeCompression off;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable true;
-
-functions
-{
-    htc
-    {
-        type            heatTransferCoeff;
-        libs            (fieldFunctionObjects);
-        field           T;
-        writeControl    writeTime;
-        writeInterval   1;
-        htcModel        fixedReferenceTemperature;
-        patches         (Wall001);
-        TRef            273;
-    }
-}
-
             """)
             w_footer(f)
     # ------------------------------------------------------------------------ #
