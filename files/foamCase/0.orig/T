@@ -9,53 +9,35 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    object      fvSchemes;
+    class       volScalarField;
+    object      T;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-ddtSchemes
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 302;
+
+boundaryField
 {
-    default         steadyState;
-}
+        
+    east
+    {
+        type            fixedValue;
+        value           uniform 290;
+    }
 
-gradSchemes
-{
-    default         Gauss linear;
-}
+    west
+    {
+        type            zeroGradient;
+    }
+    
+    ".*"
+    {
+        type            zeroGradient;
+    }
 
-divSchemes
-{
-    default         none;
-
-    div(phi,U)      bounded Gauss upwind;
-    div(phi,h)      bounded Gauss upwind;
-
-    div(phi,k)      bounded Gauss upwind;
-    div(phi,epsilon) bounded Gauss upwind;
-    div(phi,K)      bounded Gauss upwind;
-
-    div(phi,Ekp)    bounded Gauss linear;
-
-    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
-
-    div(phi,age)    bounded Gauss upwind;
-}
-
-laplacianSchemes
-{
-    default         Gauss linear orthogonal;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         orthogonal;
 }
             
 

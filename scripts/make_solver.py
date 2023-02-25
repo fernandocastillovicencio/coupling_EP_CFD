@@ -10,9 +10,9 @@ def mkSolver():
      
     # --------------------------- Prepare directory -------------------------- #
     prepare_commands="""
-    # cd files/foamCase
+    cd files/foamCase
+    rm -rf [1-9]* 0.[0-9]* processor* 0
     rm -rf 0 > /dev/null 2>&1
-    # cp -r 0.orig 0
     # """
     os.system(prepare_commands)
     # ------------------------------ Run Solver ------------------------------ #
@@ -23,7 +23,7 @@ def mkSolver():
     cp -r 0.orig 0
     # rm -rf processor*    
     potentialFoam
-    simpleFoam
+    buoyantSimpleFoam
     paraFoam
     """
     # ------------------------------------------------------------------------ #
@@ -34,9 +34,11 @@ def mkSolver():
     rm -rf processor*
     potentialFoam
     decomposePar -force
-    mpirun --use-hwthread-cpus -np 26 simpleFoam -parallel > log.foamRun
+    mpirun --use-hwthread-cpus -np 26 buoyantSimpleFoam -parallel
     reconstructPar
     touch foamCase.foam
+    rm -rf processor*
+    paraFoam
     """
     # ------------------------------------------------------------------------ #
     os.system(multi_solver_commands)
@@ -48,7 +50,7 @@ def mkSolver():
     cd files/foamCase
     # foamCleanTutorials
     # foamCleanPolyMesh
-    rm -rf constant/extendedFeatureEdgeMesh 1* 2* 3* 4* 5* 6* 7* 8* 9* processor* 0
+    rm -rf constant/extendedFeatureEdgeMesh [1-9]* 0.[0-9]*  processor* 0
     """
-    os.system(cleanCmd)
+    # os.system(cleanCmd)
     

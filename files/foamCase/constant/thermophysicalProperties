@@ -10,54 +10,46 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      fvSchemes;
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
  
-ddtSchemes
+thermoType
 {
-    default         steadyState;
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState Boussinesq;
+    specie          specie;
+    energy          sensibleEnthalpy;
 }
 
-gradSchemes
+mixture
 {
-    default         Gauss linear;
+    specie
+    {
+        molWeight       28.9;
+    }
+    equationOfState
+    {
+        rho0            1;
+        T0              300;
+        beta            3e-03;
+    }
+    thermodynamics
+    {
+        Cp              1040;
+        Hf              0;
+    }
+    transport
+    {
+        mu              1e-05;
+        Pr              0.7;
+    }
 }
-
-divSchemes
-{
-    default         none;
-
-    div(phi,U)      bounded Gauss upwind;
-    div(phi,h)      bounded Gauss upwind;
-
-    div(phi,k)      bounded Gauss upwind;
-    div(phi,epsilon) bounded Gauss upwind;
-    div(phi,K)      bounded Gauss upwind;
-
-    div(phi,Ekp)    bounded Gauss linear;
-
-    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
-
-    div(phi,age)    bounded Gauss upwind;
-}
-
-laplacianSchemes
-{
-    default         Gauss linear orthogonal;
-}
-
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         orthogonal;
-}
-            
+          
 
 
 // ************************************************************************* //
